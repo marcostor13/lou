@@ -15,6 +15,30 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/crear-ticket', function () {
+    return view('pages/crear-ticket');
+});
+
+Route::get('/agregar-cliente', function () {
+    return view('pages/agregar-cliente');
+});
+
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+//GENERALES
+Route::post('obtenerDatosTabla', 'GeneralController@obtenerDatosTabla');
+
+// TICKETS
+Route::post('obtenerClientes', 'Usuario\TicketsController@obtenerClientes');
+Route::post('crearTicket', 'Usuario\TicketsController@crearTicket');
+
+
+
+
+
+
+
