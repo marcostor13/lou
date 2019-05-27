@@ -20,7 +20,7 @@ class CreateProductosTable extends Migration
             $table->double('precio', 8, 2);
             $table->double('precio-oferta', 8, 2)->default(NULL);
             $table->integer('stock')->default(1);
-            $table->timestamps()->useCurrent();
+            $table->timestamps();
         });
     }
 

@@ -25,7 +25,30 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <input id="userID" type="hidden" value="{{ Auth::user()->id }}">
+    @if (Auth::check())
+        <input id="userID" type="hidden" value="{{Auth::user()->id}}">
+    @endif
+
+    <div id="myModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="tituloModal" class="modal-title"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="contenidoModal" class="modal-body">
+               
+            </div>
+            <div class="modal-footer">
+                <button id="btnModal1" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button id="btnModal2" type="button" class="btn btn-primary">Save changes</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">

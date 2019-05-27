@@ -20,7 +20,7 @@ class CreateServiciosTable extends Migration
             $table->double('precio', 8, 2);
             $table->double('precio-oferta', 8, 2)->default(NULL);
             $table->integer('estado')->default(1)->comment('activo 1 - activo 0');
-            $table->timestamps()->useCurrent();
+            $table->timestamps();
         });
     }
 

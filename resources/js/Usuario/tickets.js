@@ -33,6 +33,15 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
             return false;
         });
 
+        obtenerTickets();
+
+        $('#fechaInicio').change(function(){
+            obtenerTickets();
+        });    
+        $('#fechaFin').change(function(){
+            obtenerTickets();
+        }); 
+
     });
 
     
@@ -189,6 +198,7 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
         let tagResult = '#respuesta';
 
         $('.tickets').remove();
+        $('#cliente').val('');
         $(tagResult).text('...Procesando'); 
 
         $.post("/crearTicket", datos, function () {            
@@ -202,6 +212,149 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
         .always(function () {
             // $(tagResult).html(''); 
         });
+    }
+
+
+    let obtenerTickets = function(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let datos = {
+            'userID' : $('#userID').val(),
+            'fechaInicio' : $('#fechaInicio').val(),
+            'fechaFin' : $('#fechaFin').val()
+        }
+
+        let tagResult = '#tablaTickets';
+
+        $(tagResult).text('...Procesando'); 
+
+        $.post("/obtenerTickets", datos, function () {
+
+        })
+        .done(function (e) {       
+            console.log(e);
+
+            e = JSON.parse(e); 
+            
+            if (e.estado != 200){
+                $(tagResult).text(e.datos);
+            }else{
+                let a = 1; 
+                $(tagResult).html(''); 
+                e.datos.forEach(element => {
+                    $(tagResult).append(`<tr data-items="${element.item_id}" data-ticket_id ="${element.ticket_id}">
+                                    <th scope="row">${a}</th>
+                                    <td>${element.fecha}</td>
+                                    <td>${element.nombre}</td>
+                                    <td>${element.precio}</td>
+                                </tr>
+                                `); 
+                    a = a+1;
+                });
+
+                $('#tablaTickets tr').click(function(){
+                    let items = $(this).attr('data-items'); 
+                    let ticket_id = $(this).attr('data-ticket_id'); 
+                    
+                    obtenerDetalleTicket(items, ticket_id);
+
+                });
+                
+            }
+            
+            
+                         
+        })
+        .fail(function (e) {
+            $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+        })
+        .always(function () {
+            // $(tagResult).html(''); 
+        });
+    }
+
+
+    let obtenerDetalleTicket = function (items, ticket_id) {
+        
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+       
+
+        let datos = {
+            'items' : items,
+            'ticket_id' : ticket_id
+        }
+
+        let tagResult = '#detalleTicket';
+
+        $(tagResult).text('...Procesando'); 
+
+        $.post("/obtenerDetalleTicket", datos, function () {
+
+        })
+        .done(function (e) {               
+            
+           console.log(e);
+
+            e = JSON.parse(e); 
+
+            console.log(e.datos); 
+            
+            if (e.estado != 200){
+                $(tagResult).text(e.datos);
+            }else{               
+                
+                $('#tituloModal').text('Detalle de Ticket'); 
+                $('#contenidoModal').html(`
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Precio</th>
+                        </tr>
+                        </thead>
+                        <tbody id="contenidoTablaTicket">                                                   
+                        </tbody>
+                    </table>
+                `);
+
+                
+                e.datos.forEach(element => {
+                    $('#contenidoTablaTicket').append(`                   
+                            <tr>
+                                <th scope="row">${element.idServicioProducto}</th>
+                                <td>${element.cantidad}</td>
+                                <td>${element.nombre}</td>
+                                <td>${element.precio}</td>
+                            </tr> 
+                `);
+                });
+                
+                
+
+                $('#myModal').modal('show');
+                
+                
+            }
+            
+                         
+        })
+        .fail(function (e) {
+            $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+        })
+        .always(function () {
+            // $(tagResult).html(''); 
+        });
+
     }
 
 

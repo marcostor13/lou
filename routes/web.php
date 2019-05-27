@@ -23,6 +23,10 @@ Route::get('/agregar-cliente', function () {
     return view('pages/agregar-cliente');
 });
 
+Route::get('/tickets-usuario', function () {
+    return view('pages/tickets-usuario');
+});
+
 
 
 Auth::routes();
@@ -35,6 +39,8 @@ Route::post('obtenerDatosTabla', 'GeneralController@obtenerDatosTabla');
 // TICKETS
 Route::post('obtenerClientes', 'Usuario\TicketsController@obtenerClientes');
 Route::post('crearTicket', 'Usuario\TicketsController@crearTicket');
+Route::post('obtenerTickets', 'Usuario\TicketsController@obtenerTickets');
+Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 
 
 

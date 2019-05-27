@@ -49289,6 +49289,13 @@ if (window.location.pathname.indexOf('ticket') > -1) {
       crearTicket();
       return false;
     });
+    obtenerTickets();
+    $('#fechaInicio').change(function () {
+      obtenerTickets();
+    });
+    $('#fechaFin').change(function () {
+      obtenerTickets();
+    });
   });
 
   var imprimirClientes = function imprimirClientes() {
@@ -49410,9 +49417,81 @@ if (window.location.pathname.indexOf('ticket') > -1) {
     });
     var tagResult = '#respuesta';
     $('.tickets').remove();
+    $('#cliente').val('');
     $(tagResult).text('...Procesando');
     $.post("/crearTicket", datos, function () {}).done(function (e) {
       $(tagResult).text(e);
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var obtenerTickets = function obtenerTickets() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var datos = {
+      'userID': $('#userID').val(),
+      'fechaInicio': $('#fechaInicio').val(),
+      'fechaFin': $('#fechaFin').val()
+    };
+    var tagResult = '#tablaTickets';
+    $(tagResult).text('...Procesando');
+    $.post("/obtenerTickets", datos, function () {}).done(function (e) {
+      console.log(e);
+      e = JSON.parse(e);
+
+      if (e.estado != 200) {
+        $(tagResult).text(e.datos);
+      } else {
+        var a = 1;
+        $(tagResult).html('');
+        e.datos.forEach(function (element) {
+          $(tagResult).append("<tr data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(a, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
+          a = a + 1;
+        });
+        $('#tablaTickets tr').click(function () {
+          var items = $(this).attr('data-items');
+          var ticket_id = $(this).attr('data-ticket_id');
+          obtenerDetalleTicket(items, ticket_id);
+        });
+      }
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var obtenerDetalleTicket = function obtenerDetalleTicket(items, ticket_id) {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var datos = {
+      'items': items,
+      'ticket_id': ticket_id
+    };
+    var tagResult = '#detalleTicket';
+    $(tagResult).text('...Procesando');
+    $.post("/obtenerDetalleTicket", datos, function () {}).done(function (e) {
+      console.log(e);
+      e = JSON.parse(e);
+      console.log(e.datos);
+
+      if (e.estado != 200) {
+        $(tagResult).text(e.datos);
+      } else {
+        $('#tituloModal').text('Detalle de Ticket');
+        $('#contenidoModal').html("\n                    <table class=\"table\">\n                        <thead>\n                        <tr>\n                            <th scope=\"col\">#</th>\n                            <th scope=\"col\">Cantidad</th>\n                            <th scope=\"col\">Nombre</th>\n                            <th scope=\"col\">Precio</th>\n                        </tr>\n                        </thead>\n                        <tbody id=\"contenidoTablaTicket\">                                                   \n                        </tbody>\n                    </table>\n                ");
+        e.datos.forEach(function (element) {
+          $('#contenidoTablaTicket').append("                   \n                            <tr>\n                                <th scope=\"row\">".concat(element.idServicioProducto, "</th>\n                                <td>").concat(element.cantidad, "</td>\n                                <td>").concat(element.nombre, "</td>\n                                <td>").concat(element.precio, "</td>\n                            </tr> \n                "));
+        });
+        $('#myModal').modal('show');
+      }
     }).fail(function (e) {
       $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
     }).always(function () {// $(tagResult).html(''); 
