@@ -27,6 +27,11 @@ Route::get('/tickets-usuario', function () {
     return view('pages/tickets-usuario');
 });
 
+Route::get('/tickets-admin', function () {
+    return view('pages/tickets-admin');
+});
+
+
 
 
 Auth::routes();
@@ -40,6 +45,8 @@ Route::post('obtenerDatosTabla', 'GeneralController@obtenerDatosTabla');
 Route::post('obtenerClientes', 'Usuario\TicketsController@obtenerClientes');
 Route::post('crearTicket', 'Usuario\TicketsController@crearTicket');
 Route::post('obtenerTickets', 'Usuario\TicketsController@obtenerTickets');
+Route::post('guardarTickets', 'Usuario\TicketsController@guardarTickets');
+Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmin');
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 
 

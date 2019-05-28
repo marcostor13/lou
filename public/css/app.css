@@ -10674,6 +10674,10 @@ a.text-dark:focus {
   cursor: pointer;
 }
 
+.oculto {
+  display: none;
+}
+
 .color1 {
   background-color: #fffde8;
 }

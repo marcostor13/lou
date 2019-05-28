@@ -76,7 +76,7 @@ class TicketsController extends Controller
         
         $fechaFin = date("Y-m-d",strtotime($fechaFin."+ 1 days"));
         
-        $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id WHERE tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id WHERE user_id = '$userID' AND tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
 
         $tickets = array(); 
 
@@ -113,6 +113,7 @@ class TicketsController extends Controller
         return json_encode($res); 
 
     }
+    
 
     public function obtenerItems(Request $request){
 
@@ -152,7 +153,7 @@ class TicketsController extends Controller
                  
         $items = implode(',', json_decode($request->items));    
               
-        $results = DB::select("SELECT items.cantidad, items.precio, servicios.id as 'id_servicio', productos.id as 'id_producto', servicios.nombre as 'nombre_servicio', productos.nombre as 'nombre_producto' FROM items LEFT JOIN productos ON items.producto_id = productos.id LEFT JOIN servicios ON items.servicio_id = servicios.id WHERE items.id IN ($items)");
+        $results = DB::select("SELECT items.id as 'id_item', items.cantidad, items.precio, servicios.id as 'id_servicio', productos.id as 'id_producto', servicios.nombre as 'nombre_servicio', productos.nombre as 'nombre_producto' FROM items LEFT JOIN productos ON items.producto_id = productos.id LEFT JOIN servicios ON items.servicio_id = servicios.id WHERE items.id IN ($items)");
 
         $itemsRes = array(); 
 
@@ -175,6 +176,7 @@ class TicketsController extends Controller
             $nombre = ($item->id_producto == null) ? $item->nombre_servicio : $item->nombre_producto;
        
             $itemsRes[] = array(
+                'id_item' => $item->id_item,
                 'idServicioProducto' => $id,
                 'tipo' => $tipo,
                 'nombre' => $nombre,
@@ -190,6 +192,109 @@ class TicketsController extends Controller
 
         return json_encode($res);
 
+        
+
+    }
+
+
+    /////////ADMIN/////////
+
+    public function obtenerTicketsAdmin(Request $request){
+
+        if(!isset($request->userID)){
+            return "Faltan datos"; 
+        }    
+        
+        $userID = $request->userID;           
+        $fechaInicio = $request->fechaInicio;           
+        $fechaFin = $request->fechaFin;     
+        
+        $fechaFin = date("Y-m-d",strtotime($fechaFin."+ 1 days"));
+        
+        $results = DB::select("SELECT users.name as 'user_name', users.id as 'user_id', tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id INNER JOIN users ON users.id = tickets.user_id WHERE tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+
+        $tickets = array(); 
+
+        if(count($results)<1){
+            return json_encode(array(
+                'estado' => '100',
+                'datos' =>  'No hay resultados'
+            ));
+        }
+        
+        foreach ($results as $ticket) {
+            
+            $items = implode(',', json_decode($ticket->item_id));      
+
+            $precio = DB::select("SELECT SUM(precio) as precio FROM items WHERE id IN ($items)"); 
+
+            $precio = json_decode(json_encode($precio), true);
+
+            $tickets[] = array(
+                'user_id' => $ticket->user_id,
+                'user_name' => $ticket->user_name,
+                'cliente_id' => $ticket->cliente_id,
+                'item_id' => $ticket->item_id,
+                'fecha' => $ticket->fecha,
+                'nombre' => $ticket->nombre, //Cliente
+                'precio' => $precio[0]['precio'],
+                'ticket_id' => $ticket->id,
+            );            
+        }
+
+        $res = array(
+            'estado' => '200',
+            'datos' =>  $tickets
+        );
+
+        return json_encode($res); 
+
+    }
+
+
+    public function guardarTickets(Request $request){
+
+        if(!isset($request->userID)){
+            return "Faltan datos"; 
+        }    
+        
+        $userID = $request->userID;           
+        $datos = json_decode($request->datos);      
+        
+        
+        for ($i=0; $i < count($datos); $i++) { 
+
+            $id_item = $datos[$i]->id_item;
+            $cantidad = $datos[$i]->cantidad;
+            $precio = $datos[$i]->precio;
+            $tipo = $datos[$i]->tipo;
+            $nombre = $datos[$i]->nombre;
+
+
+            $updateItem = DB::table('items')
+                    ->where('id', $id_item)
+                    ->update(['cantidad' => $cantidad, 'precio' => $precio ]);
+            
+            $psID = DB::select("SELECT ".$tipo."_id as 'ps_id' FROM items WHERE id = '$id_item'");
+
+            foreach ($psID as $id) {
+                $id_PS = $id->ps_id;
+            }
+
+            $updateNombre = DB::table($tipo.'s')
+                    ->where('id', $id_PS)
+                    ->update(['nombre' => $nombre]);
+            
+        }
+           
+        
+
+        return json_encode(array(
+                'estado' => '200',
+                'datos' =>  'Datos actualizados'
+        ));
+        
+            
         
 
     }

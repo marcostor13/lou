@@ -1,3 +1,7 @@
+@if(!Auth::user()->hasRole('admin'))
+    <script>window.location.href = '/';</script>
+@endif
+
 @extends('layouts.app')
 
 @section('content')
@@ -23,6 +27,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Fecha</th>
+                        <th scope="col">Usuario</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Total</th>
                     </tr>

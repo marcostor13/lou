@@ -27,6 +27,11 @@
 <body>
     @if (Auth::check())
         <input id="userID" type="hidden" value="{{Auth::user()->id}}">
+        @if(Auth::user()->hasRole('admin'))
+            <input id="roleUser" type="hidden" value="admin">
+        @else
+            <input id="roleUser" type="hidden" value="user">
+        @endif
     @endif
 
     <div id="myModal" class="modal" tabindex="-1" role="dialog">
@@ -34,6 +39,7 @@
             <div class="modal-content">
             <div class="modal-header">
                 <h5 id="tituloModal" class="modal-title"></h5>
+                <button id="adicional" class="ml-5 btn btn-primary oculto"></button>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -42,8 +48,9 @@
                
             </div>
             <div class="modal-footer">
-                <button id="btnModal1" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button id="btnModal2" type="button" class="btn btn-primary">Save changes</button>
+                <span id="respuestaModal" class="text-success"></span>
+                <button id="btnModal2" type="button" class="btn btn-primary"></button>
+                <button id="btnModal1" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>                
             </div>
             </div>
         </div>
