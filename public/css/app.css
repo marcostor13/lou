@@ -10670,6 +10670,10 @@ a.text-dark:focus {
   }
 }
 
+body {
+  background-color: #8a1253;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -10679,19 +10683,19 @@ a.text-dark:focus {
 }
 
 .color1 {
-  background-color: #fffde8;
+  background-color: #fda403;
 }
 
 .color2 {
-  background-color: #f7e0a3;
+  background-color: #e8751a;
 }
 
 .color3 {
-  background-color: #f09c67;
+  background-color: #c51350;
 }
 
 .color4 {
-  background-color: #4c8492;
+  background-color: #8a1253;
 }
 
 ul,
@@ -10700,6 +10704,7 @@ li {
 }
 
 .tarjetas {
+  border: 1px solid white;
   min-height: 100px;
 }
 
@@ -10767,5 +10772,32 @@ li {
 
 .resultadoBusqueda li:hover {
   background-color: #f5f5f5;
+}
+
+#panel .card:nth-child(2n) {
+  background-color: #8a1253;
+}
+
+#panel .card:nth-child(2n+1) {
+  background-color: #c51350;
+}
+
+#panel .card {
+  max-height: 140px;
+  border: 1px solid white;
+  color: white;
+}
+
+#panel select,
+#panel input {
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: 1px solid white;
+}
+
+#panel select option,
+#panel input option {
+  color: #8a1253;
+  min-height: 30px;
 }
 

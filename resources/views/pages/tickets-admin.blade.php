@@ -25,7 +25,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col"># ID Tickets</th>
                         <th scope="col">Fecha</th>
                         <th scope="col">Usuario</th>
                         <th scope="col">Cliente</th>

@@ -1,5 +1,7 @@
 //GENERALES
-
+body{
+    background-color: $color4;
+}
 .pointer{
     cursor: pointer;
 }
@@ -29,7 +31,7 @@ ul, li{
 //USUARIO
 
 .tarjetas{
-
+    border: 1px solid white;
     min-height: 100px;
 
 }

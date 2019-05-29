@@ -65,6 +65,11 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
     
     let imprimirClientes = function() {
         
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
         let datos = {
             'busqueda' : $('#cliente').val()
@@ -259,17 +264,17 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
             if (e.estado != 200){
                 $(tagResult).text(e.datos);
             }else{
-                let a = 1; 
+                // let a = 1; 
                 $(tagResult).html(''); 
                 e.datos.forEach(element => {
                     $(tagResult).append(`<tr class="pointer" data-items="${element.item_id}" data-ticket_id ="${element.ticket_id}">
-                                    <th scope="row">${a}</th>
+                                    <th scope="row">${element.ticket_id}</th>
                                     <td>${element.fecha}</td>
                                     <td>${element.nombre}</td>
                                     <td>${element.precio}</td>
                                 </tr>
                                 `); 
-                    a = a+1;
+                    // a = a+1;
                 });
 
                 $('#tablaTickets tr').click(function(){

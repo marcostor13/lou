@@ -31,6 +31,10 @@ Route::get('/tickets-admin', function () {
     return view('pages/tickets-admin');
 });
 
+Route::get('/panel-admin', function () {
+    return view('pages/panel');
+});
+
 
 
 
@@ -48,6 +52,7 @@ Route::post('obtenerTickets', 'Usuario\TicketsController@obtenerTickets');
 Route::post('guardarTickets', 'Usuario\TicketsController@guardarTickets');
 Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmin');
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
+Route::post('obtenerUsuarios', 'Administrador\PanelController@obtenerUsuarios');
 
 
 

@@ -49254,6 +49254,55 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./resources/js/Administrador/panel.js":
+/*!*********************************************!*\
+  !*** ./resources/js/Administrador/panel.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+if (window.location.pathname.indexOf('panel') > -1) {
+  $(function () {
+    obtenerUsuarios();
+  });
+}
+
+var obtenerUsuarios = function obtenerUsuarios() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  var tagResult = '#usuarios';
+  $.post("/obtenerUsuarios", function () {}).done(function (e) {
+    e = JSON.parse(e);
+    e.forEach(function (element) {
+      $(tagResult).append("<option value=\"".concat(element.id, "\">").concat(element.name, "</option>"));
+    });
+  }).fail(function (e) {
+    $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+  }).always(function () {// $(tagResult).html(''); 
+  });
+};
+
+var obtenerDatosPanel = function obtenerDatosPanel() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  $.post("/obtenerDatosPanel", function () {}).done(function (e) {
+    console.log(e);
+    e = JSON.parse(e);
+    e.forEach(function (element) {});
+  }).fail(function (e) {
+    $('#panel').append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+  }).always(function () {// $(tagResult).html(''); 
+  });
+};
+
+/***/ }),
+
 /***/ "./resources/js/Usuario/tickets.js":
 /*!*****************************************!*\
   !*** ./resources/js/Usuario/tickets.js ***!
@@ -49314,6 +49363,11 @@ if (window.location.pathname.indexOf('ticket') > -1) {
   });
 
   var imprimirClientes = function imprimirClientes() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
     var datos = {
       'busqueda': $('#cliente').val()
     };
@@ -49461,11 +49515,10 @@ if (window.location.pathname.indexOf('ticket') > -1) {
       if (e.estado != 200) {
         $(tagResult).text(e.datos);
       } else {
-        var _a = 1;
+        // let a = 1; 
         $(tagResult).html('');
         e.datos.forEach(function (element) {
-          $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(_a, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
-          _a = _a + 1;
+          $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
         });
         $('#tablaTickets tr').click(function () {
           var items = $(this).attr('data-items');
@@ -49541,11 +49594,11 @@ if (window.location.pathname.indexOf('ticket') > -1) {
       if (e.estado != 200) {
         $(tagResult).text(e.datos);
       } else {
-        var _a2 = 1;
+        var _a = 1;
         $(tagResult).html('');
         e.datos.forEach(function (element) {
-          $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(_a2, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.user_name, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
-          _a2 = _a2 + 1;
+          $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(_a, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.user_name, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
+          _a = _a + 1;
         });
         $('#tablaTickets tr').click(function () {
           var items = $(this).attr('data-items');
@@ -49684,6 +49737,8 @@ var app = new Vue({
 });
 
 __webpack_require__(/*! ./Usuario/tickets */ "./resources/js/Usuario/tickets.js");
+
+__webpack_require__(/*! ./Administrador/panel */ "./resources/js/Administrador/panel.js");
 
 /***/ }),
 
