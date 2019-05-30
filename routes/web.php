@@ -53,6 +53,7 @@ Route::post('guardarTickets', 'Usuario\TicketsController@guardarTickets');
 Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmin');
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 Route::post('obtenerUsuarios', 'Administrador\PanelController@obtenerUsuarios');
+Route::post('obtenerDatosPanel', 'Administrador\PanelController@obtenerDatosPanel');
 
 
 

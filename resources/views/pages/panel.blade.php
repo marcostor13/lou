@@ -26,31 +26,59 @@
             <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
                 <div class="card-body">
                     <h5>Cant. de Tickets</h1>
-                    <h2 id="cantTickets">10</h2>
+                    <h2 id="cantTickets"></h2>
                 </div>
             </div>
             <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
                 <div class="card-body">
                     <h5>Total Facturado</h5>
-                    <h2 id="totalFacturado">10</h2>
+                    <h2 id="totalFacturado"></h2>
                 </div>
             </div>
             <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
                 <div class="card-body">
                     <h5>Ganancia Neta</h5>
-                    <h2 id="gananciaNeta">10</h2>
+                    <h2 id="gananciaNeta"></h2>
                 </div>
             </div>
             <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
                 <div class="card-body">
                     <h5>Ganancia de usuario(s)</h5>
-                    <h2 id="gananciaUsuario">10</h2>
+                    <h2 id="gananciaUsuario"></h2>
+                </div>
+            </div>
+            <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
+                <div class="card-body">
+                    <h5>Venta de Productos</h5>
+                    <h2 id="totalPrecioProductos"></h2>
                 </div>
             </div>
 
         </div>
         
 
+    </div>
+</div>
+
+<div id="tickets" class="container mt-5">
+    <div class="row">
+        
+        <div class="table-responsive">           
+            
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"># ID Tickets</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Cliente</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaTickets"></tbody>
+            </table>
+
+        </div>
     </div>
 </div>
 @endsection

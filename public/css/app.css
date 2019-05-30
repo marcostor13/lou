@@ -10801,3 +10801,7 @@ li {
   min-height: 30px;
 }
 
+#tickets * {
+  color: white;
+}
+

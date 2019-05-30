@@ -25,34 +25,63 @@ class PanelController extends Controller
             return "Faltan datos"; 
         } 
                 
-        $idUsuario = $datos->idUsuario; 
-        $fInicio  = $datos->fInicio; 
-        $fFinal  = $datos->fFinal; 
+        $idUsuario = $request->idUsuario; 
+        $fInicio  = $request->fInicio; 
+        $fFinal  = $request->fFinal; 
         
-        $query = "SELECT count(*) as 'cantTickets', item_id, created_at as fecha WHERE created_at (BETWEEN '$fInicio' AND '$fFinal')"; 
+        $query = "SELECT item_id, created_at as fecha FROM tickets WHERE (created_at BETWEEN '$fInicio' AND '$fFinal')"; 
 
-        if(isset($request->idUsuario)){ 
-            $query .= " AND id = '$idUsuario'"; 
+       
+        
+        if(isset($request->idUsuario) AND $request->idUsuario != -1){ 
+            $query .= " AND user_id = '$idUsuario'"; 
         }
         
         $tickets = DB::select($query); 
 
+        $totalFacturado = 0;
+        $gananciaNeta = 0;
+        $totalPrecioProductos = 0;
+        $cantTickets = 0; 
+
         foreach ($tickets as $ticket) {
-            $cantTickets = $ticket->cantTickets;
+            $cantTickets++;
 
-            $item_ids = json_encode($ticket->item_id);
-
-            foreach ($item_ids as $item) {
+            $item_ids = json_decode($ticket->item_id);
+            $item_ids = implode(",", $item_ids);
+            $q = "SELECT * FROM items WHERE id IN ($item_ids)"; 
+            $items = DB::select($q); 
+            
+            foreach ($items as $item) {
                 
+                $totalFacturado = $totalFacturado + $item->precio;
+               
+                if($item->producto_id != NULL){
+                    $id = $item->producto_id;         
+                    $totalPrecioProductos = $totalPrecioProductos +$item->precio; 
+                }else{
+                    $gananciaNeta = $gananciaNeta + $item->precio;
+                    $id = $item->servicio_id; 
+                }
+               
             }
 
-            
-
-
         }
-        
 
-        return json_encode();
+        $gananciaNeta = $gananciaNeta/2; 
+        $gananciaUsuario = $gananciaNeta/2; 
+
+        $datos = array(
+            "cantTickets" => $cantTickets,
+            "totalFacturado" => $totalFacturado,
+            "gananciaNeta" => $gananciaNeta,
+            "gananciaUsuario" => $gananciaUsuario,
+            "totalPrecioProductos" => $totalPrecioProductos
+        );
+
+
+        
+        return json_encode($datos);
     }
 
 }
