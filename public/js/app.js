@@ -49377,6 +49377,9 @@ $(function () {
 
   if (window.location.pathname.indexOf('panel-admin') > -1) {
     obtenerTicketsAdmin();
+    $('#usuarios').change(function () {
+      obtenerTicketsAdmin();
+    });
     $('#fechaInicio').change(function () {
       obtenerTicketsAdmin();
     });
@@ -49611,11 +49614,10 @@ var obtenerTicketsAdmin = function obtenerTicketsAdmin() {
     'fechaInicio': $('#fechaInicio').val(),
     'fechaFin': $('#fechaFin').val()
   };
-  console.log;
   var tagResult = '#tablaTickets';
   $(tagResult).text('...Procesando');
   $.post("/obtenerTicketsAdmin", datos, function () {}).done(function (e) {
-    console.log(e);
+    // console.log(e);
     e = JSON.parse(e);
 
     if (e.estado != 200) {

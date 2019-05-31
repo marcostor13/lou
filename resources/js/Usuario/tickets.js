@@ -47,7 +47,13 @@
 
         if (window.location.pathname.indexOf('panel-admin') > -1 ) {
 
+            
             obtenerTicketsAdmin();
+
+            $('#usuarios').change(function () {
+                obtenerTicketsAdmin();
+            });      
+           
             $('#fechaInicio').change(function () {
                 obtenerTicketsAdmin();
             });
@@ -403,7 +409,6 @@
             'fechaFin': $('#fechaFin').val()
         }
 
-        console.log
 
         let tagResult = '#tablaTickets';
 
@@ -414,7 +419,7 @@
         })
             .done(function (e) {
                 
-                console.log(e);
+                // console.log(e);
 
                 e = JSON.parse(e);
 
