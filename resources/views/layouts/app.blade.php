@@ -40,7 +40,7 @@
             <div class="modal-header">
                 <h5 id="tituloModal" class="modal-title"></h5>
                 <button id="adicional" class="ml-5 btn btn-primary oculto"></button>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button onclick="$('#contenidoModal').html('');" type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -48,9 +48,9 @@
                
             </div>
             <div class="modal-footer">
-                <span id="respuestaModal" class="text-success"></span>
+                <span id="respuestaModal" class="text-white"></span>
                 <button id="btnModal2" type="button" class="btn btn-primary"></button>
-                <button id="btnModal1" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>                
+                <button onclick="$('#contenidoModal').html('');" id="btnModal1" type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>                
             </div>
             </div>
         </div>
@@ -60,7 +60,8 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                    {{-- {{ config('app.name', 'Laravel') }} --}}
+                    <img style="min-width: 100px; " src="img/logo.svg" alt="">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -77,12 +78,12 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Ingresar') }}</a>
                             </li>
                             @if (Route::has('register'))
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
+                                </li> --}}
                             @endif
                         @else
                             <li class="nav-item dropdown">
@@ -90,11 +91,11 @@
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <div id="cerrarSesion" class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        {{ __('Salir') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

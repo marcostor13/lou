@@ -8,13 +8,16 @@
 <div id="tickets" class="container">
     <div class="row">
 
-        <div class="mb-4  d-flex justify-content-end align-items-center flex-wrap">                                
-            <div class="form-group ml-2">      
+        <div class="mb-4  row justify-content-end align-items-center flex-wrap col-12">                                
+            <div class="form-group  col-12 col-md-5">
+                <button class="btn mt-4 float-left" onclick="history.back();"><i class="fas fa-arrow-left mr-2"></i> Regresar</button>
+            </div>
+            <div class="form-group col-12 col-md-3">      
                 <label class="mr-2 float-right" for="fechaInicio">Fecha Inicio</label>              
                 <input id="fechaInicio" type="date" class="form-control" value="{{ date("Y-m-d",strtotime(date('Y-m-d')."- 7 days")) }}">                    
             </div> 
             
-            <div class="form-group ml-2">      
+            <div class="form-group col-12 col-md-3">      
                 <label class="mr-2 float-right" for="fechaFin">Fecha Fin</label>              
                 <input id="fechaFin" type="date" class="form-control"  value="{{ date('Y-m-d') }}">                    
             </div> 

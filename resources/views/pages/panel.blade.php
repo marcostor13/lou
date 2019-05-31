@@ -4,18 +4,21 @@
 <div id="panel" class="container">
     <div class="row justify-content-center"> 
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <div class="col-12 row justify-content-end">
-            <div class="form-group col-12 col-md-3 text-white">
+        <div class="col-12 row align-items-center justify-content-end">
+            <div class="form-group col-12 col-md-5">
+                <button class="btn mt-4 float-left" onclick="history.back();"><i class="fas fa-arrow-left mr-2"></i> Regresar</button>
+            </div>
+            <div class="form-group col-12 col-md-2 text-white">
                 <label for="fInicio">Fecha Inicio</label>
                 <select id="usuarios" class="form-control">
                     <option value="-1">Todos</option>
                 </select>
             </div>
-            <div class="form-group ml-1 col-12 col-md-3 text-white">
+            <div class="form-group ml-1 col-12 col-md-2 text-white">
                 <label for="fInicio">Fecha Inicio</label>
                 <input id="fInicio" type="date" class="form-control" value="{{ date("Y-m-d",strtotime(date('Y-m-d')."- 7 days")) }}"> 
             </div>
-            <div class="form-group ml-1 col-12 col-md-3 text-white">
+            <div class="form-group ml-1 col-12 col-md-2 text-white">
                 <label for="fFinal">Fecha Final</label>
                 <input id="fFinal" type="date" class="form-control" value="{{ date('Y-m-d') }}"> 
             </div>

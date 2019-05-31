@@ -1,5 +1,3 @@
-if (window.location.pathname.indexOf('ticket')>-1 ){
-
     $(function () {        
         
         if (window.location.pathname.indexOf('crear-ticket') > -1) {
@@ -47,7 +45,8 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
             }); 
         }
 
-        if (window.location.pathname.indexOf('tickets-admin') > -1) {
+        if (window.location.pathname.indexOf('panel-admin') > -1 ) {
+
             obtenerTicketsAdmin();
             $('#fechaInicio').change(function () {
                 obtenerTicketsAdmin();
@@ -55,6 +54,7 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
             $('#fechaFin').change(function () {
                 obtenerTicketsAdmin();
             });
+
         }
 
         
@@ -367,6 +367,7 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
                 $('#adicional').prop('disabled', false);
 
                 if($('#roleUser').val() === 'admin'){
+                    $('#adicional').unbind('click');
                     $('#adicional').text('Editar').show().click(function(){
                         editarTicket(ticket_id); 
                     });
@@ -397,10 +398,12 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
         });
 
         let datos = {
-            'userID': $('#userID').val(),
+            'userID': $('#usuarios').val(),
             'fechaInicio': $('#fechaInicio').val(),
             'fechaFin': $('#fechaFin').val()
         }
+
+        console.log
 
         let tagResult = '#tablaTickets';
 
@@ -410,6 +413,8 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
 
         })
             .done(function (e) {
+                
+                console.log(e);
 
                 e = JSON.parse(e);
 
@@ -433,15 +438,10 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
                     $('#tablaTickets tr').click(function () {
                         let items = $(this).attr('data-items');
                         let ticket_id = $(this).attr('data-ticket_id');
-
                         obtenerDetalleTicket(items, ticket_id);
-
                     });
 
                 }
-
-
-
             })
             .fail(function (e) {
                 $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
@@ -465,9 +465,11 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
 
     let editarTicket = function(ticket_id){
 
-        console.log(); 
+        console.log('datos');
 
         let datos = $('#contenidoModal td');
+
+        console.log(datos); 
 
         for (let i = 0; i < datos.length; i++) {
             const element = datos[i];
@@ -564,5 +566,5 @@ if (window.location.pathname.indexOf('ticket')>-1 ){
     
 
 
-}
+
 

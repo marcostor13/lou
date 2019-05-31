@@ -211,7 +211,13 @@ class TicketsController extends Controller
         
         $fechaFin = date("Y-m-d",strtotime($fechaFin."+ 1 days"));
         
-        $results = DB::select("SELECT users.name as 'user_name', users.id as 'user_id', tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id INNER JOIN users ON users.id = tickets.user_id WHERE tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        $query = "SELECT users.name as 'user_name', users.id as 'user_id', tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id INNER JOIN users ON users.id = tickets.user_id WHERE (tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin')";
+        
+        if($request->userID != -1){ 
+            $query .= " AND user_id = '$request->userID'";             
+        }
+
+        $results = DB::select($query);
 
         $tickets = array(); 
 
