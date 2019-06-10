@@ -1,0 +1,32 @@
+
+#adminUsuarios{
+
+    *{
+        color: white;
+    }
+    .agregarUsuario{
+        
+        font-size: 30pt;
+        
+    }
+
+    #tablaUsuarios{
+
+        input, select{
+            min-width: 110px !important;
+        }
+
+        i{
+            font-size: 16pt;
+        }
+        input:disabled, select:disabled{
+            border: 0 !important;
+        }
+    }
+
+    option{
+        color: $color2;
+    }
+    
+
+}

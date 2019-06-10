@@ -23,10 +23,14 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
+        
         if($request->user()->authorizeRoles('admin')){
             return view('pages/admin');
+        }else if($request->user()->authorizeRoles('caja')){
+            return view('pages/caja');
+        }else{
+            return view('pages/user'); 
         }
-        return view('pages/user'); 
         
     }
 }

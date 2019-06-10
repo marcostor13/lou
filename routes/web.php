@@ -35,7 +35,13 @@ Route::get('/panel-admin', function () {
     return view('pages/panel');
 });
 
+Route::get('/administrar-usuarios', function () {
+    return view('pages/administrar-usuarios');
+});
 
+Route::get('/caja', function () {
+    return view('pages/caja');
+});
 
 
 Auth::routes();
@@ -53,6 +59,7 @@ Route::post('guardarTickets', 'Usuario\TicketsController@guardarTickets');
 Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmin');
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 Route::post('obtenerUsuarios', 'Administrador\PanelController@obtenerUsuarios');
+Route::post('guardarUsuario', 'Administrador\PanelController@guardarUsuario');
 Route::post('obtenerDatosPanel', 'Administrador\PanelController@obtenerDatosPanel');
 
 

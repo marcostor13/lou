@@ -10876,3 +10876,29 @@ button.close {
   color: white;
 }
 
+#adminUsuarios * {
+  color: white;
+}
+
+#adminUsuarios .agregarUsuario {
+  font-size: 30pt;
+}
+
+#adminUsuarios #tablaUsuarios input,
+#adminUsuarios #tablaUsuarios select {
+  min-width: 110px !important;
+}
+
+#adminUsuarios #tablaUsuarios i {
+  font-size: 16pt;
+}
+
+#adminUsuarios #tablaUsuarios input:disabled,
+#adminUsuarios #tablaUsuarios select:disabled {
+  border: 0 !important;
+}
+
+#adminUsuarios option {
+  color: #e8751a;
+}
+

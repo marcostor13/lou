@@ -49328,6 +49328,92 @@ var obtenerDatosPanel = function obtenerDatosPanel() {
 
 /***/ }),
 
+/***/ "./resources/js/Administrador/usuarios.js":
+/*!************************************************!*\
+  !*** ./resources/js/Administrador/usuarios.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
+  $(function () {
+    obtenerUsuarios();
+  });
+
+  var obtenerUsuarios = function obtenerUsuarios() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaUsuarios';
+    $.post("/obtenerUsuarios", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<tr data-id=\"".concat(element.id, "\" data-name =\"").concat(element.name, "\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='name' class='form-control' type='text' value='").concat(element.name, "' disabled></td>\n                                    <td><input id='email' class='form-control' type='text' value='").concat(element.email, "' disabled></td>\n                                    <td><input id='password' class='form-control' type='password' value='").concat(element.name, "' disabled></td>\n                                    <td>\n                                        <select class=\"form-control\" id=\"idRol\" disabled>\n                                            <option value=\"1\">Administrador</option>\n                                            <option value=\"2\">Usuario</option>\n                                            <option value=\"3\">Cajero</option>\n                                        </select>\n                                    </td>\n                                    <td class='pt-3'>\n                                        <i title='Editar' class=\"pointer editarUsuario far fa-edit\"></i>\n                                        <i title='Guardar' class=\"pointer guardarUsuario far fa-check-circle ml-2 oculto\"></i>\n                                        <i title='Eliminar' class=\"pointer eliminarUsuario ml-2 fas fa-trash-alt\"></i>\n                                    </td>\n                                </tr>\n                                "));
+        $('tr[data-id="' + element.id + '"] td select').val(element.idRol);
+      });
+      $('#adminUsuarios .editarUsuario').unbind('click').click(function () {
+        $(this).parent().parent().children('td').children('input').prop('disabled', false);
+        $(this).parent().parent().children('td').children('select').prop('disabled', false);
+        $(this).parent().children('.guardarUsuario').show('fast');
+      });
+      $('#adminUsuarios .guardarUsuario').unbind('click').click(function () {
+        guardarUsuario(this);
+      });
+      $('#adminUsuarios .eliminarUsuario').unbind('click').click(function () {
+        $('#tituloModal').text('Información de Usuario');
+        $('#contenidoModal').html('¿Está seguro de eliminar este usuario?');
+        $('#btnModal1').text('NO');
+        $('#btnModal2').text('SI');
+        $('#btnModal2').unbind('click').click(function () {
+          eliminarUsuario();
+        });
+        $('#myModal').modal('show');
+      });
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var guardarUsuario = function guardarUsuario(elem) {
+    var datos = {
+      'id': $(elem).parent().parent().children('th').children('#id').val(),
+      'name': $(elem).parent().parent().children('td').children('#name').val(),
+      'email': $(elem).parent().parent().children('td').children('#email').val(),
+      'password': $(elem).parent().parent().children('td').children('#password').val(),
+      'idRol': $(elem).parent().parent().children('td').children('#idRol').val()
+    };
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaUsuarios';
+    $.post("/guardarUsuario", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Usuario');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $(elem).parent().parent().children('td').children('input').prop('disabled', true);
+        $(elem).parent().parent().children('td').children('select').prop('disabled', true);
+        $(elem).hide('fast');
+        $('#contenidoModal').html('Usuario Guardado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+/***/ }),
+
 /***/ "./resources/js/Usuario/tickets.js":
 /*!*****************************************!*\
   !*** ./resources/js/Usuario/tickets.js ***!
@@ -49768,6 +49854,8 @@ var app = new Vue({
 __webpack_require__(/*! ./Usuario/tickets */ "./resources/js/Usuario/tickets.js");
 
 __webpack_require__(/*! ./Administrador/panel */ "./resources/js/Administrador/panel.js");
+
+__webpack_require__(/*! ./Administrador/usuarios */ "./resources/js/Administrador/usuarios.js");
 
 /***/ }),
 

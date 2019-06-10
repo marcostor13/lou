@@ -9,15 +9,44 @@ use DB;
 class PanelController extends Controller
 {
     public function obtenerUsuarios(Request $request){
+
+
+        $users = DB::table('users')
+            ->join('role_user', 'users.id', '=', 'role_user.user_id')            
+            ->select('users.*', 'role_user.role_id as idRol')
+            ->get();       
         
-        $query = "SELECT id, name FROM users"; 
 
-        if(isset($request->idUsuario)){ 
-            $query .= " WHERE id = '$request->idUsuario'"; 
-        }            
-
-        return json_encode(DB::select($query));
+        return json_encode($users);
     }
+
+    public function is_valid_email($str){
+        $matches = null;
+        return (1 === preg_match('/^[A-z0-9\\._-]+@[A-z0-9][A-z0-9-]*(\\.[A-z0-9_-]+)*\\.([A-z]{2,6})$/', $str, $matches));
+    }
+
+    public function guardarUsuario(Request $request){
+        
+        if(!$this->is_valid_email($request->email)){
+            return 'Correo inválido';
+        }
+        
+        DB::table('users')
+            ->where('id', $request->id)
+            ->update([  'name' => $request->name,   
+                        'email' => $request->email,
+                        'password' => password_hash($request->password, PASSWORD_DEFAULT)
+                        ]);
+
+        DB::table('role_user')
+            ->where('user_id', $request->id)
+            ->update(['role_id' => $request->idRol]);          
+
+        return 1;
+    }
+
+
+    
 
     public function obtenerDatosPanel(Request $request){
 

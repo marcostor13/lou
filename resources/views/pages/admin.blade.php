@@ -12,10 +12,10 @@
                 <div class="">Crear Ticket</div>              
                 
             </div>
-            {{-- <div onclick="window.location.href='/tickets-admin'; return false;" class="tarjetas card ml-0 ml-md-5 mt-4 mt-md-0 pointer col-12 col-md 6 color4 text-white d-flex justify-content-center align-items-center">
-                <div class="">Tickets</div>              
+            <div onclick="window.location.href='/administrar-usuarios'; return false;" class="tarjetas card ml-0 ml-md-5 mt-4 mt-md-0 pointer col-12 col-md 6 color4 text-white d-flex justify-content-center align-items-center">
+                <div class="">Administrar Usuarios</div>              
                 
-            </div> --}}
+            </div>
             
         </div>
     </div>
