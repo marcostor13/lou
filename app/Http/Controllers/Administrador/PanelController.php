@@ -45,7 +45,31 @@ class PanelController extends Controller
         return 1;
     }
 
+    public function crearUsuario(Request $request){
+        
+        if(!$this->is_valid_email($request->email)){
+            return 'Correo inválido';
+        }
+        
+        $id = DB::table('users')->insertGetId(
+            ['email' => $request->email, 'name' => $request->name, 'password' => password_hash($request->password, PASSWORD_DEFAULT)]
+        );
 
+        DB::table('role_user')->insert(
+            ['user_id' => $id, 'role_id' => $request->rol]
+        );          
+
+        return 1;
+    }
+
+    public function eliminarUsuario(Request $request){       
+               
+        DB::table('users')->where('id', '=', $request->id)->delete();
+        DB::table('role_user')->where('user_id', '=', $request->id)->delete();
+        return 1;
+    }
+
+    
     
 
     public function obtenerDatosPanel(Request $request){

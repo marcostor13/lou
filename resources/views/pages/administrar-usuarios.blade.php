@@ -4,7 +4,7 @@
 <div id="adminUsuarios" class="container">
     <div class="row">        
         <div class="table-responsive">          
-            
+            <button onclick="window.location.href='/home'; " class="btn btn-primary mb-4"><i class="fas fa-arrow-left mr-2"></i>Regresar</button>  
             <div title='Nuevo Usuario' onclick="window.location.href='/agregar-usuario'" class="pointer text-center">
                 <i class="agregarUsuario fas fa-plus-circle text-white mb-4 pt-1"></i>
             </div>

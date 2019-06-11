@@ -35,4 +35,5 @@ const app = new Vue({
 require('./Usuario/tickets');
 require('./Administrador/panel');
 require('./Administrador/usuarios');
+require('./Administrador/crearUsuario');
 

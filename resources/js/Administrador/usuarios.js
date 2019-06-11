@@ -3,6 +3,7 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
     $(function () {
         
         obtenerUsuarios();
+        
 
     });
 
@@ -37,7 +38,7 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
                                     <td class='pt-3'>
                                         <i title='Editar' class="pointer editarUsuario far fa-edit"></i>
                                         <i title='Guardar' class="pointer guardarUsuario far fa-check-circle ml-2 oculto"></i>
-                                        <i title='Eliminar' class="pointer eliminarUsuario ml-2 fas fa-trash-alt"></i>
+                                        <i data-id="${element.id}" title='Eliminar' class="pointer eliminarUsuario ml-2 fas fa-trash-alt"></i>
                                     </td>
                                 </tr>
                                 `);
@@ -62,14 +63,68 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
                 $('#btnModal1').text('NO');
                 
                 $('#btnModal2').text('SI');
-                $('#btnModal2').unbind('click').click(function () {
-                    eliminarUsuario();
+
+                let id = ($(this).attr('data-id')); 
+
+                $('#btnModal2').unbind('click').click(function (elem) {
+                    eliminarUsuario(id);
                 });
                 $('#myModal').modal('show');
             });
 
             
 
+        })
+        .fail(function (e) {
+            $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+        })
+        .always(function () {
+            // $(tagResult).html(''); 
+        });
+
+    }
+
+   
+
+    let eliminarUsuario = function (id) {
+
+        console.log(id);
+
+        let datos = {
+            'id': id
+        }
+
+        $('#btnModal1').text('Cerrar');
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let tagResult = '#tablaUsuarios';
+        $.post("/eliminarUsuario", datos, function () {
+
+        })
+        .done(function (e) {
+
+            $('#tituloModal').text('Información de Usuario');
+            $('#btnModal2').hide();
+            $('#btnMOdal1').click(function(){
+                window.location.reload();
+            });
+
+            if (e == 1) {               
+
+                $('#contenidoModal').html('Usuario Elimnado');
+
+            } else {
+
+                $('#contenidoModal').html(e);
+
+            }
+
+            $('#myModal').modal('show');
         })
         .fail(function (e) {
             $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
@@ -131,6 +186,5 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
 
     }
 
-    
 
 }

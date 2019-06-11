@@ -43,6 +43,10 @@ Route::get('/caja', function () {
     return view('pages/caja');
 });
 
+Route::get('/agregar-usuario', function () {
+    return view('pages/agregar-usuario');
+});
+
 
 Auth::routes();
 
@@ -60,6 +64,8 @@ Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmi
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 Route::post('obtenerUsuarios', 'Administrador\PanelController@obtenerUsuarios');
 Route::post('guardarUsuario', 'Administrador\PanelController@guardarUsuario');
+Route::post('crearUsuario', 'Administrador\PanelController@crearUsuario');
+Route::post('eliminarUsuario', 'Administrador\PanelController@eliminarUsuario');
 Route::post('obtenerDatosPanel', 'Administrador\PanelController@obtenerDatosPanel');
 
 

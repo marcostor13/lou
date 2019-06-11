@@ -10858,6 +10858,10 @@ button.close {
   color: white !important;
 }
 
+.btn1:hover {
+  background-color: #fda403 !important;
+}
+
 #panel .card:nth-child(2n) {
   background-color: #8a1253;
 }

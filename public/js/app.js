@@ -49254,6 +49254,49 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./resources/js/Administrador/crearUsuario.js":
+/*!****************************************************!*\
+  !*** ./resources/js/Administrador/crearUsuario.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+if (window.location.pathname.indexOf('agregar-usuario') > -1) {
+  $(function () {
+    $('#formCrearUsuario').submit(function () {
+      crearUsuario();
+      return false;
+    });
+  });
+
+  var crearUsuario = function crearUsuario() {
+    var form = $('#formCrearUsuario');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#respuestaCrearUsuario';
+    $.post("/crearUsuario", form.serialize(), function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Usuario');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $('#contenidoModal').html('Usuario Creado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+/***/ }),
+
 /***/ "./resources/js/Administrador/panel.js":
 /*!*********************************************!*\
   !*** ./resources/js/Administrador/panel.js ***!
@@ -49350,7 +49393,7 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
     $.post("/obtenerUsuarios", function () {}).done(function (e) {
       e = JSON.parse(e);
       e.forEach(function (element) {
-        $(tagResult).append("<tr data-id=\"".concat(element.id, "\" data-name =\"").concat(element.name, "\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='name' class='form-control' type='text' value='").concat(element.name, "' disabled></td>\n                                    <td><input id='email' class='form-control' type='text' value='").concat(element.email, "' disabled></td>\n                                    <td><input id='password' class='form-control' type='password' value='").concat(element.name, "' disabled></td>\n                                    <td>\n                                        <select class=\"form-control\" id=\"idRol\" disabled>\n                                            <option value=\"1\">Administrador</option>\n                                            <option value=\"2\">Usuario</option>\n                                            <option value=\"3\">Cajero</option>\n                                        </select>\n                                    </td>\n                                    <td class='pt-3'>\n                                        <i title='Editar' class=\"pointer editarUsuario far fa-edit\"></i>\n                                        <i title='Guardar' class=\"pointer guardarUsuario far fa-check-circle ml-2 oculto\"></i>\n                                        <i title='Eliminar' class=\"pointer eliminarUsuario ml-2 fas fa-trash-alt\"></i>\n                                    </td>\n                                </tr>\n                                "));
+        $(tagResult).append("<tr data-id=\"".concat(element.id, "\" data-name =\"").concat(element.name, "\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='name' class='form-control' type='text' value='").concat(element.name, "' disabled></td>\n                                    <td><input id='email' class='form-control' type='text' value='").concat(element.email, "' disabled></td>\n                                    <td><input id='password' class='form-control' type='password' value='").concat(element.name, "' disabled></td>\n                                    <td>\n                                        <select class=\"form-control\" id=\"idRol\" disabled>\n                                            <option value=\"1\">Administrador</option>\n                                            <option value=\"2\">Usuario</option>\n                                            <option value=\"3\">Cajero</option>\n                                        </select>\n                                    </td>\n                                    <td class='pt-3'>\n                                        <i title='Editar' class=\"pointer editarUsuario far fa-edit\"></i>\n                                        <i title='Guardar' class=\"pointer guardarUsuario far fa-check-circle ml-2 oculto\"></i>\n                                        <i data-id=\"").concat(element.id, "\" title='Eliminar' class=\"pointer eliminarUsuario ml-2 fas fa-trash-alt\"></i>\n                                    </td>\n                                </tr>\n                                "));
         $('tr[data-id="' + element.id + '"] td select').val(element.idRol);
       });
       $('#adminUsuarios .editarUsuario').unbind('click').click(function () {
@@ -49366,11 +49409,44 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
         $('#contenidoModal').html('¿Está seguro de eliminar este usuario?');
         $('#btnModal1').text('NO');
         $('#btnModal2').text('SI');
-        $('#btnModal2').unbind('click').click(function () {
-          eliminarUsuario();
+        var id = $(this).attr('data-id');
+        $('#btnModal2').unbind('click').click(function (elem) {
+          eliminarUsuario(id);
         });
         $('#myModal').modal('show');
       });
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var eliminarUsuario = function eliminarUsuario(id) {
+    console.log(id);
+    var datos = {
+      'id': id
+    };
+    $('#btnModal1').text('Cerrar');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaUsuarios';
+    $.post("/eliminarUsuario", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Usuario');
+      $('#btnModal2').hide();
+      $('#btnMOdal1').click(function () {
+        window.location.reload();
+      });
+
+      if (e == 1) {
+        $('#contenidoModal').html('Usuario Elimnado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
     }).fail(function (e) {
       $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
     }).always(function () {// $(tagResult).html(''); 
@@ -49856,6 +49932,8 @@ __webpack_require__(/*! ./Usuario/tickets */ "./resources/js/Usuario/tickets.js"
 __webpack_require__(/*! ./Administrador/panel */ "./resources/js/Administrador/panel.js");
 
 __webpack_require__(/*! ./Administrador/usuarios */ "./resources/js/Administrador/usuarios.js");
+
+__webpack_require__(/*! ./Administrador/crearUsuario */ "./resources/js/Administrador/crearUsuario.js");
 
 /***/ }),
 
