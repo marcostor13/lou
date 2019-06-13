@@ -2,29 +2,23 @@
 
 @section('content')
 <div class="container">
-    <button class="btn btn-primary mb-4"><i class="fas fa-arrow-left mr-2"></i>Regresar</button>
-    <div class="row justify-content-center">
+    <button onclick="history.back();" class="btn btn-primary mb-4"><i class="fas fa-arrow-left mr-2"></i>Regresar</button>
+    <div id="agregarCliente" class="row justify-content-center">
         
-        <div class="col-md-8 col-sm-10 d-flex justify-content-center align-items-center flex-wrap">
+        <div class="col-md-10 col-12 d-flex justify-content-center align-items-center flex-wrap">
             
-            <form>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="nombres">Nombre</label>
-                        <input type="text" class="form-control" id="nombres" placeholder="Nombres">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="correo">Correo</label>
-                        <input type="email" class="form-control" id="correo" placeholder="Correo">
-                    </div>
-                    
+            <form id="formAgregarCliente" class="col-8">
+                
+                <div class="form-group">                        
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombres">
                 </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="telefono">Teléfono</label>
-                        <input type="text" class="form-control" id="telefono" placeholder="Teléfono">
-                    </div>                                        
-                </div>                
+                <div class="form-group">                        
+                    <input type="email" class="form-control" name="correo" placeholder="Correo">
+                </div>            
+                <div class="form-group">                        
+                    <input type="text" class="form-control" name="telefono" placeholder="Teléfono">
+                </div>                                        
+                               
                 <button type="submit" class="btn btn-primary col-12 mt-4">Crear</button>
             </form>
         </div>

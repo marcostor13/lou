@@ -164,7 +164,8 @@ button.close{
     color: white !important;
 }
 
-.btn1:hover{
+button:hover{
     background-color: $color1 !important; 
+    transition: all .5s;
 }
 

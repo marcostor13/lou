@@ -15,11 +15,12 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('producto_id')->unsigned()->default(NULL);
             $table->integer('servicio_id')->unsigned()->default(NULL);
             $table->float('precio');
             $table->integer('cantidad')->default(1); 
-            $table->timestamps();
+            $table->integer('descuento')->default(0); 
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(NULL);
         });
     }
 

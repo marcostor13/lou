@@ -18,7 +18,8 @@ class CreateTicketsTable extends Migration
             $table->string('user_id');
             $table->string('cliente_id');           
             $table->string('item_id');           
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(NULL);
         });
     }
 

@@ -17,11 +17,12 @@ class CreateServiciosTable extends Migration
             $table->bigIncrements('id');
             $table->string('nombre');
             $table->string('descripcion')->default(NULL);
-            $table->double('precio', 8, 2);
-            $table->double('descuento', 8, 2)->default(0)->comment('Descuento por producto');
-            $table->double('precio-oferta', 8, 2)->default(NULL);
+            $table->string('precio');
+            $table->string('descuento')->default(0)->comment('Descuento por producto');
+            $table->string('precio-oferta')->default(NULL);
             $table->integer('estado')->default(1)->comment('activo 1 - activo 0');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(NULL);
         });
     }
 

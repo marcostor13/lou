@@ -1,16 +1,16 @@
 
-#adminUsuarios{
+#adminUsuarios, #adminServicios, #adminClientes{
 
     *{
         color: white;
     }
-    .agregarUsuario{
+    .agregarUsuario, .agregarServicio, .agregarCliente{
         
         font-size: 30pt;
         
     }
 
-    #tablaUsuarios{
+    #tablaUsuarios, #tablaServicios, #tablaClientes{
 
         input, select{
             min-width: 110px !important;

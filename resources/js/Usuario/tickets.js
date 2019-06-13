@@ -13,14 +13,7 @@
             });
 
             obtenerServiciosProductos('servicios');
-            obtenerServiciosProductos('productos');
             
-            $('#agregarProducto').click(function(){
-                $('#error').text(''); 
-                agregarServicioProducto('productos');
-                return false;
-            });
-
             $('#agregarServicio').click(function () {
                 $('#error').text(''); 
                 agregarServicioProducto('servicios');
@@ -44,6 +37,17 @@
                 obtenerTickets();
             }); 
         }
+
+        if (window.location.pathname.indexOf('tickets-cajero') > -1) {
+            obtenerTicketsCajero();
+            $('#fechaInicio').change(function () {
+                obtenerTicketsCajero();
+            });
+            $('#fechaFin').change(function () {
+                obtenerTicketsCajero();
+            });
+        }
+
 
         if (window.location.pathname.indexOf('panel-admin') > -1 ) {
 
@@ -131,7 +135,7 @@
         .done(function (e) {
             e = JSON.parse(e);
             e.forEach(element => {
-                $(tagResult).append(`<option data-precio="${element.precio}" value="${element.id}">${element.nombre} - S/.${element.precio}</option>`);
+                $(tagResult).append(`<option data-descuento="${element.descuento}" data-precio="${element.precio}" value="${element.id}">${element.nombre} - S/.${element.precio}</option>`);
             });
             $(tagResult).change(function () {
                 selecionarPrecio($(this), tipo);
@@ -148,7 +152,9 @@
 
     let selecionarPrecio = function (element, tipo) {
         let precio = $('#' + tipo + ' option:selected').attr('data-precio');
+        let descuento = $('#' + tipo + ' option:selected').attr('data-descuento');
         $('#precio' + tipo).val(precio);       
+        $('#descuento' + tipo).val(descuento);       
     }
 
     let agregarServicioProducto = function(tipo){
@@ -157,14 +163,20 @@
         //Id del producto o servicio
         let idPS = $('#' + tipo).val();
         let nombre = $('#'+tipo+' option:selected').text().split('-')[0].trim();
-        let cantidad = $('#cantidad'+tipo).val(); 
+        let cantidad = $('#cantidad' + tipo).val(); 
+        let descuento = $('#descuento'+tipo).val(); 
+
+        if(descuento.indexOf('%')){
+            descuento = descuento.replace('%', '').trim();
+            descuento = parseInt(precio) * parseInt(descuento)/100; 
+        }
 
         if(precio == '' || idPS == '0' || cantidad == ''){
             return false; 
         }
 
         $('#divProductos').after(`
-            <div data-tipo="${tipo}" data-id="${idPS}"  data-precio="${precio}" data-cantidad="${cantidad}" data-nombre="${nombre}" class="tickets form-group d-flex justify-content-between align-items-center pt-2 pb-2 pl-1 pr-1 bg-warning rounded">
+            <div data-tipo="${tipo}" data-id="${idPS}"  data-descuento="${descuento}" data-precio="${precio}" data-cantidad="${cantidad}" data-nombre="${nombre}" class="tickets form-group d-flex justify-content-between align-items-center pt-2 pb-2 pl-1 pr-1 bg-warning rounded">
                 <span id="nombreCliente" class="col-11">${cantidad} ${nombre} - S/ ${precio}</span>                    
                 <i onclick="$(this).parent().remove();" class="fas fa-times pointer col-1"></i>
             </div>`
@@ -197,6 +209,7 @@
                     'id': $(element).attr('data-id'),
                     'precio': $(element).attr('data-precio'),
                     'cantidad': $(element).attr('data-cantidad'),
+                    'descuento': $(element).attr('data-descuento'),
                     'nombre': $(element).attr('data-nombre')                    
                 }); 
             }
@@ -304,6 +317,67 @@
         });
     }
 
+let obtenerTicketsCajero = function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    let datos = {
+        'userID': -1,
+        'fechaInicio': $('#fechaInicio').val(),
+        'fechaFin': $('#fechaFin').val()
+    }
+
+    let tagResult = '#tablaTickets';
+
+    $(tagResult).text('...Procesando');
+
+    $.post("/obtenerTickets", datos, function () {
+
+    })
+        .done(function (e) {
+
+            e = JSON.parse(e);
+
+            if (e.estado != 200) {
+                $(tagResult).text(e.datos);
+            } else {
+                // let a = 1; 
+                $(tagResult).html('');
+                e.datos.forEach(element => {
+                    $(tagResult).append(`<tr class="pointer" data-items="${element.item_id}" data-ticket_id ="${element.ticket_id}">
+                                    <th scope="row">${element.ticket_id}</th>
+                                    <td>${element.fecha}</td>
+                                    <td>${element.nombre}</td>
+                                    <td>${element.precio}</td>
+                                </tr>
+                                `);
+                    // a = a+1;
+                });
+
+                $('#tablaTickets tr').click(function () {
+                    let items = $(this).attr('data-items');
+                    let ticket_id = $(this).attr('data-ticket_id');
+
+                    obtenerDetalleTicket(items, ticket_id);
+
+                });
+
+            }
+
+
+
+        })
+        .fail(function (e) {
+            $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+        })
+        .always(function () {
+            // $(tagResult).html(''); 
+        });
+}
+
 
     let obtenerDetalleTicket = function (items, ticket_id) {        
         
@@ -344,6 +418,7 @@
                             <th scope="col">Cantidad</th>
                             <th scope="col">Nombre</th>
                             <th scope="col">Precio</th>
+                            <th scope="col">Descuento</th>
                         </tr>
                         </thead>
                         <tbody id="contenidoTablaTicket">                                                   
@@ -360,6 +435,7 @@
                             <td>${element.cantidad}</td>
                             <td>${element.nombre}</td>
                             <td>${element.precio}</td>
+                            <td>${element.descuento}</td>
                         </tr> 
                     `);
 

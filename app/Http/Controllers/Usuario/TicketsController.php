@@ -31,7 +31,7 @@ class TicketsController extends Controller
 
         $cliente = $request->cliente;        
         $userID = $request->userID;        
-        $idCliente = $request->idCliente;        
+        $idCliente = $request->idCliente; 
         $items = json_decode($request->items);      
         $idsItems = array();        
 
@@ -44,7 +44,8 @@ class TicketsController extends Controller
                 [ 
                     $columna => $item->id ,
                     'precio' => $item->precio ,
-                    'cantidad' => $item->cantidad 
+                    'cantidad' => $item->cantidad, 
+                    'descuento' => $item->descuento 
                 ]
             );
         }
@@ -75,8 +76,13 @@ class TicketsController extends Controller
         $fechaFin = $request->fechaFin;     
         
         $fechaFin = date("Y-m-d",strtotime($fechaFin."+ 1 days"));
-        
-        $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id WHERE user_id = '$userID' AND tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+            
+
+        if($userID == -1){
+            $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id WHERE  tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }else{
+            $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', clientes.nombre FROM tickets INNER JOIN clientes ON clientes.id = tickets.cliente_id WHERE user_id = '$userID' AND tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }
 
         $tickets = array(); 
 
@@ -91,7 +97,7 @@ class TicketsController extends Controller
             
             $items = implode(',', json_decode($ticket->item_id));      
 
-            $precio = DB::select("SELECT SUM(precio) as precio FROM items WHERE id IN ($items)"); 
+            $precio = DB::select("SELECT SUM(precio-descuento) as precio FROM items WHERE id IN ($items)"); 
 
             $precio = json_decode(json_encode($precio), true);
 
@@ -153,7 +159,7 @@ class TicketsController extends Controller
                  
         $items = implode(',', json_decode($request->items));    
               
-        $results = DB::select("SELECT items.id as 'id_item', items.cantidad, items.precio, servicios.id as 'id_servicio', productos.id as 'id_producto', servicios.nombre as 'nombre_servicio', productos.nombre as 'nombre_producto' FROM items LEFT JOIN productos ON items.producto_id = productos.id LEFT JOIN servicios ON items.servicio_id = servicios.id WHERE items.id IN ($items)");
+        $results = DB::select("SELECT items.descuento as 'descuento', items.id as 'id_item', items.cantidad, items.precio, servicios.id as 'id_servicio', servicios.nombre as 'nombre_servicio' FROM items  LEFT JOIN servicios ON items.servicio_id = servicios.id WHERE items.id IN ($items)");
 
         $itemsRes = array(); 
 
@@ -171,9 +177,9 @@ class TicketsController extends Controller
 
         foreach ($results as $item) {
                      
-            $tipo = ($item->id_producto == null) ? 'servicio' : 'producto';
-            $id = ($item->id_producto == null) ? $item->id_servicio : $item->id_producto;
-            $nombre = ($item->id_producto == null) ? $item->nombre_servicio : $item->nombre_producto;
+            $tipo = 'servicio';
+            $id = $item->id_servicio;
+            $nombre = $item->nombre_servicio;
        
             $itemsRes[] = array(
                 'id_item' => $item->id_item,
@@ -181,7 +187,8 @@ class TicketsController extends Controller
                 'tipo' => $tipo,
                 'nombre' => $nombre,
                 'precio' => $item->precio,                
-                'cantidad' => $item->cantidad                
+                'cantidad' => $item->cantidad,                
+                'descuento' => $item->descuento                
             );                    
         }
 

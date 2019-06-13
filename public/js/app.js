@@ -49254,35 +49254,144 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./resources/js/Administrador/crearUsuario.js":
-/*!****************************************************!*\
-  !*** ./resources/js/Administrador/crearUsuario.js ***!
-  \****************************************************/
+/***/ "./resources/js/Administrador/clientes.js":
+/*!************************************************!*\
+  !*** ./resources/js/Administrador/clientes.js ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-if (window.location.pathname.indexOf('agregar-usuario') > -1) {
+if (window.location.pathname.indexOf('administrar-clientes') > -1) {
   $(function () {
-    $('#formCrearUsuario').submit(function () {
-      crearUsuario();
-      return false;
-    });
+    obtenerClientes();
   });
 
-  var crearUsuario = function crearUsuario() {
-    var form = $('#formCrearUsuario');
+  var obtenerClientes = function obtenerClientes() {
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
-    var tagResult = '#respuestaCrearUsuario';
-    $.post("/crearUsuario", form.serialize(), function () {}).done(function (e) {
-      $('#tituloModal').text('Información de Usuario');
+    var tagResult = '#tablaClientes';
+    $.post("/obtenerClientes", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<tr data-id=\"".concat(element.id, "\" data-name =\"").concat(element.name, "\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='nombre' class='form-control' type='text' value='").concat(element.nombre, "' disabled></td>\n                                    <td><input id='correo' class='form-control' type='text' value='").concat(element.correo, "' disabled></td>\n                                    <td><input id='telefono' class='form-control' type='text' value='").concat(element.telefono, "' disabled></td>\n                                    \n                                    <td class='pt-3'>\n                                        <i title='Editar' class=\"pointer editarCliente far fa-edit\"></i>\n                                        <i title='Guardar' class=\"pointer guardarCliente far fa-check-circle ml-2 oculto\"></i>\n                                        <i data-id=\"").concat(element.id, "\" title='Eliminar' class=\"pointer eliminarCliente ml-2 fas fa-trash-alt\"></i>\n                                    </td>\n                                </tr>\n                                "));
+        $('tr[data-id="' + element.id + '"] td select').val(element.idRol);
+      });
+      $('#adminClientes .editarCliente').unbind('click').click(function () {
+        $(this).parent().parent().children('td').children('input').prop('disabled', false);
+        $(this).parent().parent().children('td').children('select').prop('disabled', false);
+        $(this).parent().children('.guardarCliente').show('fast');
+      });
+      $('#adminClientes .guardarCliente').unbind('click').click(function () {
+        guardarCliente(this);
+      });
+      $('#adminClientes .eliminarCliente').unbind('click').click(function () {
+        $('#tituloModal').text('Información de Cliente');
+        $('#contenidoModal').html('¿Está seguro de eliminar este Cliente?');
+        $('#btnModal1').text('NO');
+        $('#btnModal2').text('SI');
+        var id = $(this).attr('data-id');
+        $('#btnModal2').unbind('click').click(function (elem) {
+          eliminarCliente(id);
+        });
+        $('#myModal').modal('show');
+      });
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var eliminarCliente = function eliminarCliente(id) {
+    console.log(id);
+    var datos = {
+      'id': id
+    };
+    $('#btnModal1').text('Cerrar');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaClientes';
+    $.post("/eliminarCliente", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Cliente');
+      $('#btnModal2').hide();
+      $('#btnMOdal1').click(function () {
+        window.location.reload();
+      });
+
+      if (e == 1) {
+        $('#contenidoModal').html('Cliente Elimnado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var guardarCliente = function guardarCliente(elem) {
+    var datos = {
+      'id': $(elem).parent().parent().children('th').children('#id').val(),
+      'nombre': $(elem).parent().parent().children('td').children('#nombre').val(),
+      'correo': $(elem).parent().parent().children('td').children('#correo').val(),
+      'telefono': $(elem).parent().parent().children('td').children('#telefono').val()
+    };
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaClientes';
+    $.post("/guardarCliente", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Cliente');
       $('#btnModal2').hide();
 
       if (e == 1) {
-        $('#contenidoModal').html('Usuario Creado');
+        $(elem).parent().parent().children('td').children('input').prop('disabled', true);
+        $(elem).parent().parent().children('td').children('select').prop('disabled', true);
+        $(elem).hide('fast');
+        $('#contenidoModal').html('Cliente Guardado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+if (window.location.pathname.indexOf('agregar-cliente') > -1) {
+  $(function () {
+    $('#formAgregarCliente').submit(function () {
+      agregarCliente();
+      return false;
+    });
+  });
+
+  var agregarCliente = function agregarCliente() {
+    var form = $('#formAgregarCliente');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#respuestaAgregarCliente';
+    $.post("/agregarCliente", form.serialize(), function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Cliente');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $('#contenidoModal').html('Cliente Agregado');
       } else {
         $('#contenidoModal').html(e);
       }
@@ -49361,13 +49470,270 @@ var obtenerDatosPanel = function obtenerDatosPanel() {
     $('#totalFacturado').text('S/ ' + e.totalFacturado);
     $('#gananciaNeta').text('S/ ' + e.gananciaNeta);
     $('#gananciaUsuario').text('S/ ' + e.gananciaUsuario);
-    $('#totalPrecioProductos').text('S/ ' + e.totalPrecioProductos); // e.forEach(element => {
+    $('#totalDescuentos').text('S/ ' + e.totalDescuentos);
+    console.log(e.servCantidad);
+    serviciosCantidad(e.servCantidad);
+    usuarioTicket(e.usuarioTicket); // e.forEach(element => {
     // });
   }).fail(function (e) {
     $('#panel').append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
   }).always(function () {// $(tagResult).html(''); 
   });
 };
+
+var serviciosCantidad = function serviciosCantidad(servCantidad) {
+  var cat = [];
+  var data = [];
+
+  for (var key in servCantidad) {
+    cat.push(key);
+    data.push(parseInt(servCantidad[key]));
+    console.log("key " + key + " has value " + servCantidad[key]);
+  }
+
+  cuadros('cuadro1', 'barras', 'Servicios x Cantidad', '', 'Servicios', 'Cantidad', cat, data);
+};
+
+var usuarioTicket = function usuarioTicket(_usuarioTicket) {
+  var cat = [];
+  var data = [];
+
+  for (var key in _usuarioTicket) {
+    cat.push(key);
+    data.push(parseInt(_usuarioTicket[key]));
+    console.log("key " + key + " has value " + _usuarioTicket[key]);
+  }
+
+  cuadros('cuadro2', 'barras', 'Usuarios x Tickets', '', 'Usuarios', 'Cantidad Tickets', cat, data);
+};
+
+var cuadros = function cuadros(cont, tipo, titulo, subtitulo, titY, titX, cat, data) {
+  switch (tipo) {
+    case 'barras':
+      Highcharts.chart(cont, {
+        chart: {
+          type: 'column'
+        },
+        title: {
+          text: titulo
+        },
+        subtitle: {
+          text: subtitulo
+        },
+        xAxis: {
+          categories: cat,
+          // categories: [
+          //     'Jan',
+          //     'Feb',
+          //     'Mar',
+          //     'Apr',
+          //     'May',
+          //     'Jun',
+          //     'Jul',
+          //     'Aug',
+          //     'Sep',
+          //     'Oct',
+          //     'Nov',
+          //     'Dec'
+          // ],
+          crosshair: true
+        },
+        yAxis: {
+          min: 0,
+          title: {
+            text: titY
+          }
+        },
+        tooltip: {
+          headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+          pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+          footerFormat: '</table>',
+          shared: true,
+          useHTML: true
+        },
+        plotOptions: {
+          column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+          }
+        },
+        series: [{
+          name: titX,
+          data: data
+        }] // series: [{
+        //     name: 'Tokyo',
+        //     data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        // }, {
+        //     name: 'New York',
+        //     data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+        // }, {
+        //     name: 'London',
+        //     data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+        // }, {
+        //     name: 'Berlin',
+        //     data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+        // }]
+
+      });
+      break;
+
+    default:
+      break;
+  }
+};
+
+/***/ }),
+
+/***/ "./resources/js/Administrador/servicios.js":
+/*!*************************************************!*\
+  !*** ./resources/js/Administrador/servicios.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+if (window.location.pathname.indexOf('administrar-servicios') > -1) {
+  $(function () {
+    obtenerServicios();
+  });
+
+  var obtenerServicios = function obtenerServicios() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaServicios';
+    $.post("/obtenerServicios", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<tr data-id=\"".concat(element.id, "\" data-name =\"").concat(element.name, "\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='nombre' class='form-control' type='text' value='").concat(element.nombre, "' disabled></td>\n                                    <td><input id='descripcion' class='form-control' type='text' value='").concat(element.descripcion, "' disabled></td>\n                                    <td><input id='precio' class='form-control' type='text' value='").concat(element.precio, "' disabled></td>\n                                    <td><input id='descuento' class='form-control' type='text' value='").concat(element.descuento, "' disabled></td>                                    \n                                    <td class='pt-3'>\n                                        <i title='Editar' class=\"pointer editarUsuario far fa-edit\"></i>\n                                        <i title='Guardar' class=\"pointer guardarServicio far fa-check-circle ml-2 oculto\"></i>\n                                        <i data-id=\"").concat(element.id, "\" title='Eliminar' class=\"pointer eliminarServicio ml-2 fas fa-trash-alt\"></i>\n                                    </td>\n                                </tr>\n                                "));
+      });
+      $('#adminServicios .editarUsuario').unbind('click').click(function () {
+        $(this).parent().parent().children('td').children('input').prop('disabled', false);
+        $(this).parent().parent().children('td').children('select').prop('disabled', false);
+        $(this).parent().children('.guardarServicio').show('fast');
+      });
+      $('#adminServicios .guardarServicio').unbind('click').click(function () {
+        guardarServicio(this);
+      });
+      $('#adminServicios .eliminarServicio').unbind('click').click(function () {
+        $('#tituloModal').text('Información de Servicio');
+        $('#contenidoModal').html('¿Está seguro de eliminar este servicio?');
+        $('#btnModal1').text('NO');
+        $('#btnModal2').text('SI');
+        var id = $(this).attr('data-id');
+        $('#btnModal2').unbind('click').click(function () {
+          eliminarServicio(id);
+        });
+        $('#myModal').modal('show');
+      });
+    }).fail(function (e) {
+      $(tagResult).append("<span >Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var eliminarServicio = function eliminarServicio(id) {
+    var datos = {
+      'id': id
+    };
+    $('#btnModal1').text('Cerrar');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaServicios';
+    $.post("/eliminarServicio", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Servicio');
+      $('#btnModal2').hide();
+      $('#btnMOdal1').click(function () {
+        window.location.reload();
+      });
+
+      if (e == 1) {
+        $('#contenidoModal').html('Servicio Elimnado');
+        obtenerServicios();
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span >Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var guardarServicio = function guardarServicio(elem) {
+    var datos = {
+      'id': $(elem).parent().parent().children('th').children('#id').val(),
+      'nombre': $(elem).parent().parent().children('td').children('#nombre').val(),
+      'descripcion': $(elem).parent().parent().children('td').children('#descripcion').val(),
+      'precio': $(elem).parent().parent().children('td').children('#precio').val(),
+      'descuento': $(elem).parent().parent().children('td').children('#descuento').val()
+    };
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaServicios';
+    $.post("/guardarServicio", datos, function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Servicio');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $(elem).parent().parent().children('td').children('input').prop('disabled', true);
+        $(elem).parent().parent().children('td').children('select').prop('disabled', true);
+        $(elem).hide('fast');
+        $('#contenidoModal').html('Servicio Guardado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span >Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+if (window.location.pathname.indexOf('servicio') > -1) {
+  $(function () {
+    $('#formCrearServicio').submit(function () {
+      crearServicio();
+      return false;
+    });
+  });
+
+  var crearServicio = function crearServicio() {
+    var form = $('#formCrearServicio');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#respuestaCrearServicio';
+    $.post("/agregarServicio", form.serialize(), function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Servicio');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $('#contenidoModal').html('Servicio Creado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+      $('#formCrearServicio input').val('');
+    }).fail(function (e) {
+      $(tagResult).append("<span >Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
 
 /***/ }),
 
@@ -49488,6 +49854,40 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
   };
 }
 
+if (window.location.pathname.indexOf('agregar-usuario') > -1) {
+  $(function () {
+    $('#formCrearUsuario').submit(function () {
+      crearUsuario();
+      return false;
+    });
+  });
+
+  var crearUsuario = function crearUsuario() {
+    var form = $('#formCrearUsuario');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#respuestaCrearUsuario';
+    $.post("/crearUsuario", form.serialize(), function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Usuario');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $('#contenidoModal').html('Usuario Creado');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
 /***/ }),
 
 /***/ "./resources/js/Usuario/tickets.js":
@@ -49509,12 +49909,6 @@ $(function () {
       }
     });
     obtenerServiciosProductos('servicios');
-    obtenerServiciosProductos('productos');
-    $('#agregarProducto').click(function () {
-      $('#error').text('');
-      agregarServicioProducto('productos');
-      return false;
-    });
     $('#agregarServicio').click(function () {
       $('#error').text('');
       agregarServicioProducto('servicios');
@@ -49534,6 +49928,16 @@ $(function () {
     });
     $('#fechaFin').change(function () {
       obtenerTickets();
+    });
+  }
+
+  if (window.location.pathname.indexOf('tickets-cajero') > -1) {
+    obtenerTicketsCajero();
+    $('#fechaInicio').change(function () {
+      obtenerTicketsCajero();
+    });
+    $('#fechaFin').change(function () {
+      obtenerTicketsCajero();
     });
   }
 
@@ -49597,7 +50001,7 @@ var obtenerServiciosProductos = function obtenerServiciosProductos(tipo) {
   }).done(function (e) {
     e = JSON.parse(e);
     e.forEach(function (element) {
-      $(tagResult).append("<option data-precio=\"".concat(element.precio, "\" value=\"").concat(element.id, "\">").concat(element.nombre, " - S/.").concat(element.precio, "</option>"));
+      $(tagResult).append("<option data-descuento=\"".concat(element.descuento, "\" data-precio=\"").concat(element.precio, "\" value=\"").concat(element.id, "\">").concat(element.nombre, " - S/.").concat(element.precio, "</option>"));
     });
     $(tagResult).change(function () {
       selecionarPrecio($(this), tipo);
@@ -49610,7 +50014,9 @@ var obtenerServiciosProductos = function obtenerServiciosProductos(tipo) {
 
 var selecionarPrecio = function selecionarPrecio(element, tipo) {
   var precio = $('#' + tipo + ' option:selected').attr('data-precio');
+  var descuento = $('#' + tipo + ' option:selected').attr('data-descuento');
   $('#precio' + tipo).val(precio);
+  $('#descuento' + tipo).val(descuento);
 };
 
 var agregarServicioProducto = function agregarServicioProducto(tipo) {
@@ -49619,12 +50025,18 @@ var agregarServicioProducto = function agregarServicioProducto(tipo) {
   var idPS = $('#' + tipo).val();
   var nombre = $('#' + tipo + ' option:selected').text().split('-')[0].trim();
   var cantidad = $('#cantidad' + tipo).val();
+  var descuento = $('#descuento' + tipo).val();
+
+  if (descuento.indexOf('%')) {
+    descuento = descuento.replace('%', '').trim();
+    descuento = parseInt(precio) * parseInt(descuento) / 100;
+  }
 
   if (precio == '' || idPS == '0' || cantidad == '') {
     return false;
   }
 
-  $('#divProductos').after("\n            <div data-tipo=\"".concat(tipo, "\" data-id=\"").concat(idPS, "\"  data-precio=\"").concat(precio, "\" data-cantidad=\"").concat(cantidad, "\" data-nombre=\"").concat(nombre, "\" class=\"tickets form-group d-flex justify-content-between align-items-center pt-2 pb-2 pl-1 pr-1 bg-warning rounded\">\n                <span id=\"nombreCliente\" class=\"col-11\">").concat(cantidad, " ").concat(nombre, " - S/ ").concat(precio, "</span>                    \n                <i onclick=\"$(this).parent().remove();\" class=\"fas fa-times pointer col-1\"></i>\n            </div>"));
+  $('#divProductos').after("\n            <div data-tipo=\"".concat(tipo, "\" data-id=\"").concat(idPS, "\"  data-descuento=\"").concat(descuento, "\" data-precio=\"").concat(precio, "\" data-cantidad=\"").concat(cantidad, "\" data-nombre=\"").concat(nombre, "\" class=\"tickets form-group d-flex justify-content-between align-items-center pt-2 pb-2 pl-1 pr-1 bg-warning rounded\">\n                <span id=\"nombreCliente\" class=\"col-11\">").concat(cantidad, " ").concat(nombre, " - S/ ").concat(precio, "</span>                    \n                <i onclick=\"$(this).parent().remove();\" class=\"fas fa-times pointer col-1\"></i>\n            </div>"));
   $('#precio' + tipo).val('');
   $('#' + tipo).val('0');
   $('#cantidad' + tipo).val('1');
@@ -49651,6 +50063,7 @@ var crearTicket = function crearTicket() {
         'id': $(element).attr('data-id'),
         'precio': $(element).attr('data-precio'),
         'cantidad': $(element).attr('data-cantidad'),
+        'descuento': $(element).attr('data-descuento'),
         'nombre': $(element).attr('data-nombre')
       });
     }
@@ -49721,6 +50134,42 @@ var obtenerTickets = function obtenerTickets() {
   });
 };
 
+var obtenerTicketsCajero = function obtenerTicketsCajero() {
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+  var datos = {
+    'userID': -1,
+    'fechaInicio': $('#fechaInicio').val(),
+    'fechaFin': $('#fechaFin').val()
+  };
+  var tagResult = '#tablaTickets';
+  $(tagResult).text('...Procesando');
+  $.post("/obtenerTickets", datos, function () {}).done(function (e) {
+    e = JSON.parse(e);
+
+    if (e.estado != 200) {
+      $(tagResult).text(e.datos);
+    } else {
+      // let a = 1; 
+      $(tagResult).html('');
+      e.datos.forEach(function (element) {
+        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
+      });
+      $('#tablaTickets tr').click(function () {
+        var items = $(this).attr('data-items');
+        var ticket_id = $(this).attr('data-ticket_id');
+        obtenerDetalleTicket(items, ticket_id);
+      });
+    }
+  }).fail(function (e) {
+    $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+  }).always(function () {// $(tagResult).html(''); 
+  });
+};
+
 var obtenerDetalleTicket = function obtenerDetalleTicket(items, ticket_id) {
   $.ajaxSetup({
     headers: {
@@ -49740,10 +50189,10 @@ var obtenerDetalleTicket = function obtenerDetalleTicket(items, ticket_id) {
       $(tagResult).text(e.datos);
     } else {
       $('#tituloModal').text('Detalle de Ticket');
-      $('#contenidoModal').html("\n                    <table class=\"table\">\n                        <thead>\n                        <tr>\n                            <th scope=\"col\">#</th>\n                            <th scope=\"col\">Cantidad</th>\n                            <th scope=\"col\">Nombre</th>\n                            <th scope=\"col\">Precio</th>\n                        </tr>\n                        </thead>\n                        <tbody id=\"contenidoTablaTicket\">                                                   \n                        </tbody>\n                    </table>\n                ");
+      $('#contenidoModal').html("\n                    <table class=\"table\">\n                        <thead>\n                        <tr>\n                            <th scope=\"col\">#</th>\n                            <th scope=\"col\">Cantidad</th>\n                            <th scope=\"col\">Nombre</th>\n                            <th scope=\"col\">Precio</th>\n                            <th scope=\"col\">Descuento</th>\n                        </tr>\n                        </thead>\n                        <tbody id=\"contenidoTablaTicket\">                                                   \n                        </tbody>\n                    </table>\n                ");
       a = 1;
       e.datos.forEach(function (element) {
-        $('#contenidoTablaTicket').append("                   \n                        <tr data-id=\"".concat(element.id_item, "\" data-tipo=\"").concat(element.tipo, "\">\n                            <th scope=\"row\">").concat(a, "</th>\n                            <td>").concat(element.cantidad, "</td>\n                            <td>").concat(element.nombre, "</td>\n                            <td>").concat(element.precio, "</td>\n                        </tr> \n                    "));
+        $('#contenidoTablaTicket').append("                   \n                        <tr data-id=\"".concat(element.id_item, "\" data-tipo=\"").concat(element.tipo, "\">\n                            <th scope=\"row\">").concat(a, "</th>\n                            <td>").concat(element.cantidad, "</td>\n                            <td>").concat(element.nombre, "</td>\n                            <td>").concat(element.precio, "</td>\n                            <td>").concat(element.descuento, "</td>\n                        </tr> \n                    "));
         a++;
       });
       $('#myModal').modal('show');
@@ -49933,7 +50382,9 @@ __webpack_require__(/*! ./Administrador/panel */ "./resources/js/Administrador/p
 
 __webpack_require__(/*! ./Administrador/usuarios */ "./resources/js/Administrador/usuarios.js");
 
-__webpack_require__(/*! ./Administrador/crearUsuario */ "./resources/js/Administrador/crearUsuario.js");
+__webpack_require__(/*! ./Administrador/clientes */ "./resources/js/Administrador/clientes.js");
+
+__webpack_require__(/*! ./Administrador/servicios */ "./resources/js/Administrador/servicios.js");
 
 /***/ }),
 

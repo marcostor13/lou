@@ -24,6 +24,7 @@ class PanelController extends Controller
         $matches = null;
         return (1 === preg_match('/^[A-z0-9\\._-]+@[A-z0-9][A-z0-9-]*(\\.[A-z0-9_-]+)*\\.([A-z]{2,6})$/', $str, $matches));
     }
+    
 
     public function guardarUsuario(Request $request){
         
@@ -62,6 +63,47 @@ class PanelController extends Controller
         return 1;
     }
 
+    public function agregarCliente(Request $request){
+        
+        if(!$this->is_valid_email($request->correo)){
+            return 'Correo inválido';
+        }
+
+        $cliente = DB::table('clientes')
+        ->where('nombre','=', $request->nombre)
+        ->orwhere('correo','=', $request->correo)
+        ->orwhere('telefono','=', $request->telefono)
+        ->get();
+
+        if(count($cliente)>0){
+            return 'El cliente ya existe';
+        }
+        
+        $id = DB::table('clientes')->insertGetId(
+            ['correo' => $request->correo, 'nombre' => $request->nombre, 'telefono' => $request->telefono]
+        );             
+
+        return 1;
+    }
+
+    public function agregarServicio(Request $request){
+          
+
+        $cliente = DB::table('servicios')
+        ->where('nombre','=', $request->nombre)        
+        ->get();
+
+        if(count($cliente)>0){
+            return 'Ya existe un servicio con el mismo nombre';
+        }
+        
+        $id = DB::table('servicios')->insertGetId(
+            ['nombre' => $request->nombre, 'descripcion' => $request->descripcion, 'precio' => $request->precio, 'descuento' => $request->descuento]
+        );             
+
+        return 1;
+    }
+
     public function eliminarUsuario(Request $request){       
                
         DB::table('users')->where('id', '=', $request->id)->delete();
@@ -80,9 +122,11 @@ class PanelController extends Controller
                 
         $idUsuario = $request->idUsuario; 
         $fInicio  = $request->fInicio; 
-        $fFinal  = $request->fFinal; 
+        $fFinal  = $request->fFinal;
         
-        $query = "SELECT item_id, created_at as fecha FROM tickets WHERE (created_at BETWEEN '$fInicio' AND '$fFinal')"; 
+        $fFinal = date("Y-m-d",strtotime($fFinal."+ 1 days")); 
+        
+        $query = "SELECT item_id, tickets.created_at as fecha, users.name as 'usuario' FROM tickets INNER JOIN users ON users.id = tickets.user_id WHERE (tickets.created_at BETWEEN '$fInicio' AND '$fFinal')"; 
 
        
         
@@ -94,29 +138,40 @@ class PanelController extends Controller
 
         $totalFacturado = 0;
         $gananciaNeta = 0;
-        $totalPrecioProductos = 0;
+        $totalDescuentos = 0;
         $cantTickets = 0; 
+
+        $servCantidad = array(); 
+        $usuarioTicket = array(); 
 
         foreach ($tickets as $ticket) {
             $cantTickets++;
 
             $item_ids = json_decode($ticket->item_id);
             $item_ids = implode(",", $item_ids);
-            $q = "SELECT * FROM items WHERE id IN ($item_ids)"; 
+            $q = "SELECT items.precio as 'precio', items.descuento as 'descuento', items.servicio_id as 'servicio_id', servicios.nombre as 'nombre' FROM items INNER JOIN servicios ON servicios.id = items.servicio_id WHERE items.id IN ($item_ids)"; 
             $items = DB::select($q); 
+                       
             
             foreach ($items as $item) {
                 
                 $totalFacturado = $totalFacturado + $item->precio;
-               
-                if($item->producto_id != NULL){
-                    $id = $item->producto_id;         
-                    $totalPrecioProductos = $totalPrecioProductos +$item->precio; 
+                $totalDescuentos = $totalDescuentos + $item->descuento;  
+                $gananciaNeta = $gananciaNeta + ($item->precio - $item->descuento);
+                $id = $item->servicio_id;     
+                
+                if(isset($servCantidad[$item->nombre])){
+                    $servCantidad[$item->nombre] = $servCantidad[$item->nombre] + 1; 
                 }else{
-                    $gananciaNeta = $gananciaNeta + $item->precio;
-                    $id = $item->servicio_id; 
+                    $servCantidad[$item->nombre] = 1;
                 }
                
+            }
+
+            if(isset($usuarioTicket[$ticket->usuario])){
+                $usuarioTicket[$ticket->usuario] = $usuarioTicket[$ticket->usuario] + 1; 
+            }else{
+                $usuarioTicket[$ticket->usuario] = 1;
             }
 
         }
@@ -129,12 +184,61 @@ class PanelController extends Controller
             "totalFacturado" => $totalFacturado,
             "gananciaNeta" => $gananciaNeta,
             "gananciaUsuario" => $gananciaUsuario,
-            "totalPrecioProductos" => $totalPrecioProductos
+            "totalDescuentos" => $totalDescuentos,
+            "servCantidad" => $servCantidad,
+            "usuarioTicket" => $usuarioTicket,
         );
 
 
         
         return json_encode($datos);
+    }
+
+    public function obtenerServicios(Request $request){
+        return json_encode(DB::table('servicios')->get());
+    }
+
+    public function guardarServicio(Request $request){
+                    
+        DB::table('servicios')
+            ->where('id', $request->id)
+            ->update([  'nombre' => $request->nombre,   
+                        'descripcion' => $request->descripcion,
+                        'precio' => $request->precio,
+                        'descuento' => $request->descuento,
+                        ]);   
+        return 1;
+    }
+
+    public function eliminarServicio(Request $request){                      
+        DB::table('servicios')->where('id', '=', $request->id)->delete();
+        return 1;
+    }
+
+
+
+     public function obtenerClientes(Request $request){
+        return json_encode(DB::table('clientes')->get());
+    }
+
+    public function guardarCliente(Request $request){
+        
+        if(!$this->is_valid_email($request->correo)){
+            return 'Correo inválido';
+        }
+        
+        DB::table('clientes')
+            ->where('id', $request->id)
+            ->update([  'nombre' => $request->nombre,   
+                        'correo' => $request->correo,
+                        'telefono' => $request->telefono,
+                        ]);   
+        return 1;
+    }
+
+    public function eliminarCliente(Request $request){                      
+        DB::table('clientes')->where('id', '=', $request->id)->delete();
+        return 1;
     }
 
 }

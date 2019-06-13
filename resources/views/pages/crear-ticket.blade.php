@@ -9,40 +9,41 @@
             
             <form id="formTicket" class="col-12 col-md-8">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <div class="seccionForm">                
-                    <div class="form-group relative">                    
-                        <input data-id="" type="search" class="form-control" id="cliente" placeholder="Buscar Cliente" autocomplete="off">
-                        <div id="resBuscarCliente" class="resultadoBusqueda"></div>
-                    </div>                    
+                <div title='Nuevo Cliente' onclick="window.location.href='/agregar-cliente'" class="pointer text-center">
+                    <i class="agregarCliente fas fa-plus-circle  text-white mb-4 pt-1"></i>
+                </div>               
+              
+                <div class="form-group relative">                    
+                    <input data-id="" type="search" class="form-control" id="cliente" placeholder="Buscar Cliente" autocomplete="off">
+                    <div id="resBuscarCliente" class="resultadoBusqueda"></div>
                 </div>                    
+                 
                 
-                <div class="form-group row justify-content-around" >                    
-                    <div class="col-9" >
-                        <select class="form-control" id="servicios">
-                            <option value="0">Servicio</option>                            
-                        </select>
-                        <div class="mt-2 d-flex">
+                <div class="form-group" >                    
+
+                    <select class="form-control" id="servicios">
+                        <option value="0">Servicio</option>                            
+                    </select>
+                    <div class="d-flex justify-content-between mt-2">
+                        <div >
+                            <label class="text-white ml-3" for="cantidadservicios">Cantidad</label>
                             <input type="number" class="form-control" id="cantidadservicios" value="1">  
-                            <input type="text" class="form-control ml-2" id="precioservicios" placeholder="Precio Sev.">
+                        </div>
+                        <div >
+                            <label class="text-white ml-3" for="precioservicios">Precio</label>
+                            <input type="text" class="form-control ml-2" id="precioservicios" >
+                        </div>
+                        <div>
+                            <label class="text-white ml-3" for="descuentoservicios">Descuento</label>
+                            <input type="text" class="form-control" id="descuentoservicios" >
                         </div>
                     </div>
-                    <button id="agregarServicio" class="btn btn-primary">Agregar</button>
-                </div>               
+                    <button id="agregarServicio" class="btn btn-primary mt-2">Agregar</button>
+                </div>      
                 
-                <div id="divProductos" class="form-group row justify-content-around ">                    
-                    <div class="col-9" >
-                        <select class="form-control" id="productos">
-                            <option value="0">Producto</option>                            
-                        </select> 
-                        <div class="mt-2 d-flex">
-                            <input type="number" class="form-control" id="cantidadproductos" value="1">                        
-                            <input type="text" class="form-control ml-2" id="precioproductos" placeholder="Precio Prod.">                        
-                        </div>                   
-                    </div>                    
-                    <button id="agregarProducto" class="btn btn-primary">Agregar</button>
-                </div>    
+                <div id="divProductos"></div>
 
-                <div id="error" class="text-danger col-12 text-center mt-4 mb-4"></div>
+                <div id="error" class="text-white col-12 text-center mt-4 mb-4"></div>
                 <div id="respuesta" class="text-success col-12 text-center mt-4 mb-4"></div>
                 
                 <button type="submit" class="btn btn-primary w-100">Crear Ticket</button>

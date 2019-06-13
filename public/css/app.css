@@ -10858,8 +10858,9 @@ button.close {
   color: white !important;
 }
 
-.btn1:hover {
+button:hover {
   background-color: #fda403 !important;
+  transition: all 0.5s;
 }
 
 #panel .card:nth-child(2n) {
@@ -10880,29 +10881,89 @@ button.close {
   color: white;
 }
 
-#adminUsuarios * {
+#adminUsuarios *,
+#adminServicios *,
+#adminClientes * {
   color: white;
 }
 
-#adminUsuarios .agregarUsuario {
+#adminUsuarios .agregarUsuario,
+#adminUsuarios .agregarServicio,
+#adminUsuarios .agregarCliente,
+#adminServicios .agregarUsuario,
+#adminServicios .agregarServicio,
+#adminServicios .agregarCliente,
+#adminClientes .agregarUsuario,
+#adminClientes .agregarServicio,
+#adminClientes .agregarCliente {
   font-size: 30pt;
 }
 
 #adminUsuarios #tablaUsuarios input,
-#adminUsuarios #tablaUsuarios select {
+#adminUsuarios #tablaUsuarios select,
+#adminUsuarios #tablaServicios input,
+#adminUsuarios #tablaServicios select,
+#adminUsuarios #tablaClientes input,
+#adminUsuarios #tablaClientes select,
+#adminServicios #tablaUsuarios input,
+#adminServicios #tablaUsuarios select,
+#adminServicios #tablaServicios input,
+#adminServicios #tablaServicios select,
+#adminServicios #tablaClientes input,
+#adminServicios #tablaClientes select,
+#adminClientes #tablaUsuarios input,
+#adminClientes #tablaUsuarios select,
+#adminClientes #tablaServicios input,
+#adminClientes #tablaServicios select,
+#adminClientes #tablaClientes input,
+#adminClientes #tablaClientes select {
   min-width: 110px !important;
 }
 
-#adminUsuarios #tablaUsuarios i {
+#adminUsuarios #tablaUsuarios i,
+#adminUsuarios #tablaServicios i,
+#adminUsuarios #tablaClientes i,
+#adminServicios #tablaUsuarios i,
+#adminServicios #tablaServicios i,
+#adminServicios #tablaClientes i,
+#adminClientes #tablaUsuarios i,
+#adminClientes #tablaServicios i,
+#adminClientes #tablaClientes i {
   font-size: 16pt;
 }
 
 #adminUsuarios #tablaUsuarios input:disabled,
-#adminUsuarios #tablaUsuarios select:disabled {
+#adminUsuarios #tablaUsuarios select:disabled,
+#adminUsuarios #tablaServicios input:disabled,
+#adminUsuarios #tablaServicios select:disabled,
+#adminUsuarios #tablaClientes input:disabled,
+#adminUsuarios #tablaClientes select:disabled,
+#adminServicios #tablaUsuarios input:disabled,
+#adminServicios #tablaUsuarios select:disabled,
+#adminServicios #tablaServicios input:disabled,
+#adminServicios #tablaServicios select:disabled,
+#adminServicios #tablaClientes input:disabled,
+#adminServicios #tablaClientes select:disabled,
+#adminClientes #tablaUsuarios input:disabled,
+#adminClientes #tablaUsuarios select:disabled,
+#adminClientes #tablaServicios input:disabled,
+#adminClientes #tablaServicios select:disabled,
+#adminClientes #tablaClientes input:disabled,
+#adminClientes #tablaClientes select:disabled {
   border: 0 !important;
 }
 
-#adminUsuarios option {
+#adminUsuarios option,
+#adminServicios option,
+#adminClientes option {
   color: #e8751a;
+}
+
+#agregarCliente * {
+  color: white;
+}
+
+#crearTicket .agregarCliente {
+  font-size: 40px;
 }
 

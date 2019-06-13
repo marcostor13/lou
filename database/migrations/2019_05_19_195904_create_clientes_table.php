@@ -18,7 +18,9 @@ class CreateClientesTable extends Migration
             $table->string('nombre')->default(NULL);
             $table->string('correo')->default(NULL);
             $table->string('telefono')->default(NULL);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(NULL);
+
         });
     }
 

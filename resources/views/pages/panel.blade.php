@@ -52,8 +52,8 @@
             </div>
             <div class="card col-12 col-md-3 col-lg-2 mt-2 mt-md-0">
                 <div class="card-body">
-                    <h5>Venta de Productos</h5>
-                    <h2 id="totalPrecioProductos"></h2>
+                    <h5>Total Descuentos</h5>
+                    <h2 id="totalDescuentos"></h2>
                 </div>
             </div>
 
@@ -61,6 +61,13 @@
         
 
     </div>
+</div>
+
+<div class="cuadros d-flex flex-column flex-md-row justify-content-center align-items-center mt-5 mb-5">
+
+    <div id="cuadro1" class="cuadrosItem"></div>
+    <div id="cuadro2" class="cuadrosItem ml-2"></div>
+
 </div>
 
 <div id="tickets" class="container mt-5">
