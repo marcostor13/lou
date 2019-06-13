@@ -185,7 +185,7 @@ if (window.location.pathname.indexOf('agregar-usuario') > -1) {
     $(function () {
 
         $('#formCrearUsuario').submit(function () {
-            crearUsuario();
+            crearCupon();
             return false;
         });
 
@@ -231,6 +231,243 @@ if (window.location.pathname.indexOf('agregar-usuario') > -1) {
                 // $(tagResult).html(''); 
             });
 
+    }
+
+}
+
+if (window.location.pathname.indexOf('cupon') > -1) {
+
+    $(function () {
+        obtenerCupones();
+        obtenerUsuariosSelect();
+
+        $('#formCrearCupon').submit(function () {
+            crearCupon();
+            return false;
+        });
+
+    });
+
+    let obtenerCupones = function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let tagResult = '#tablaCupones';
+        $.post("/obtenerCupones", function () {
+
+        })
+            .done(function (e) {
+                e = JSON.parse(e);
+                e.forEach(element => {
+                    $(tagResult).append(`<tr data-id="${element.id}"}">
+                                    <th scope="row"><input id='id' class='form-control' type='text' value='${element.id}' disabled></th>
+                                    <td><input id='fecha' class='form-control' type='text' value='${element.created_at}' disabled></td>
+                                    <td><input id='usuario' class='form-control' type='text' value='${element.usuario}' disabled></td>
+                                    <td><input id='descripcion' class='form-control' type='text' value='${element.descripcion}' disabled></td>
+                                    <td><input id='valor' class='form-control' type='text' value='${element.valor}' disabled></td>
+                                    
+                                </tr>
+                                `);
+                    
+
+                });
+            })
+            .fail(function (e) {
+                $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+            })
+            .always(function () {
+                // $(tagResult).html(''); 
+            });
+
+    }
+
+
+    let obtenerUsuariosSelect = function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let tagResult = '#selectUsuarios';
+        $.post("/obtenerUsuariosSelect", function () {
+
+        })
+            .done(function (e) {
+                e = JSON.parse(e);
+                e.forEach(element => {
+                    $(tagResult).append(`<option value="${element.id}">${element.name}</option>`);  
+                });
+            })
+            .fail(function (e) {
+                $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+            })
+            .always(function () {
+                // $(tagResult).html(''); 
+            });
+
+    }
+
+
+    let crearCupon = function () {
+
+        let form = $('#formCrearCupon');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let tagResult = '#respuestaCrearCupon';
+        $.post("/crearCupon", form.serialize(), function () {
+
+        })
+            .done(function (e) {
+
+                $('#tituloModal').text('Información de Cupon');
+                $('#btnModal2').hide();
+
+                if (e == 1) {
+
+                    $('#contenidoModal').html('Cupon Creado');
+                    $('#formCrearCupon input').val('');
+                } else {
+
+                    $('#contenidoModal').html(e);
+
+                }
+
+                $('#myModal').modal('show');
+            })
+            .fail(function (e) {
+                $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+            })
+            .always(function () {
+                // $(tagResult).html(''); 
+            });
+
+    }
+
+
+}
+
+
+
+if (window.location.pathname.indexOf('pagos') > -1) {
+
+    $(function () {
+
+        obtenerUsuariosSelect();
+
+
+        $('#selectUsuarios').change(function () {
+            obtenerPagos();
+            return false;
+        });
+        $('#fechaInicio').change(function () {
+            obtenerPagos();
+            return false;
+        });
+        $('#fechaFin').change(function () {
+            obtenerPagos();
+            return false;
+        });
+
+    });
+
+    let obtenerUsuariosSelect = function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let tagResult = '#selectUsuarios';
+        $.post("/obtenerUsuariosSelect", function () {
+
+        })
+            .done(function (e) {
+                e = JSON.parse(e);
+                e.forEach(element => {
+                    $(tagResult).append(`<option value="${element.id}">${element.name}</option>`);
+                });
+                obtenerPagos();
+            })
+            .fail(function (e) {
+                $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+            })
+            .always(function () {
+                // $(tagResult).html(''); 
+            });
+
+    }
+
+
+    let obtenerPagos = function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        let datos = {
+            'usuario': $('#selectUsuarios').val(),
+            'fechaInicio': $('#fechaInicio').val(),
+            'fechaFin': $('#fechaFin').val()
+        }
+
+        let tagResult = '#tablaPagos';
+
+        $(tagResult).text('...Procesando');
+
+        $.post("/obtenerPagos", datos, function () {
+
+        })
+            .done(function (e) {
+
+                e = JSON.parse(e);
+
+                if (e.estado != 200) {
+                    $(tagResult).text(e.datos);
+                } else {
+
+                    $(tagResult).html('');
+                    let cont = 1; 
+                    let element = e.datos;
+
+                    if (element.cupones == null){
+                        element.cupones = 0;
+                    }
+
+                        $(tagResult).append(`<tr>                                    
+                                    <td>${cont}</td>
+                                    <td>${element.usuario}</td>
+                                    <td>${element.subTotal}</td>
+                                    <td>${element.cupones}</td>
+                                    <td>${element.total}</td>
+                                </tr>
+                                `);
+
+                                cont++;
+                    
+                    
+
+                }
+
+
+
+            })
+            .fail(function (e) {
+                $(tagResult).append(`<span class="text-danger">Error: ${(e.responseText)}</span>`);
+            })
+            .always(function () {
+                // $(tagResult).html(''); 
+            });
     }
 
 }

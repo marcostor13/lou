@@ -97,7 +97,7 @@ class TicketsController extends Controller
             
             $items = implode(',', json_decode($ticket->item_id));      
 
-            $precio = DB::select("SELECT SUM(precio-descuento) as precio FROM items WHERE id IN ($items)"); 
+            $precio = DB::select("SELECT SUM(precio-descuento) as precio,  SUM(descuento) as descuento FROM items WHERE id IN ($items)"); 
 
             $precio = json_decode(json_encode($precio), true);
 
@@ -107,6 +107,7 @@ class TicketsController extends Controller
                 'fecha' => $ticket->fecha,
                 'nombre' => $ticket->nombre,
                 'precio' => $precio[0]['precio'],
+                'descuento' => $precio[0]['descuento'],
                 'ticket_id' => $ticket->id,
             );            
         }
@@ -239,7 +240,7 @@ class TicketsController extends Controller
             
             $items = implode(',', json_decode($ticket->item_id));      
 
-            $precio = DB::select("SELECT SUM(precio) as precio FROM items WHERE id IN ($items)"); 
+            $precio = DB::select("SELECT SUM(precio-descuento) as precio, SUM(descuento) as descuento FROM items WHERE id IN ($items)"); 
 
             $precio = json_decode(json_encode($precio), true);
 
@@ -251,6 +252,7 @@ class TicketsController extends Controller
                 'fecha' => $ticket->fecha,
                 'nombre' => $ticket->nombre, //Cliente
                 'precio' => $precio[0]['precio'],
+                'descuento' => $precio[0]['descuento'],
                 'ticket_id' => $ticket->id,
             );            
         }

@@ -166,7 +166,7 @@
         let cantidad = $('#cantidad' + tipo).val(); 
         let descuento = $('#descuento'+tipo).val(); 
 
-        if(descuento.indexOf('%')){
+        if(descuento.indexOf('%') > -1){
             descuento = descuento.replace('%', '').trim();
             descuento = parseInt(precio) * parseInt(descuento)/100; 
         }
@@ -192,6 +192,7 @@
 
         let nombreCliente = $('#cliente').val();  
         let idCliente = $('#cliente').attr('data-id');  
+        
 
         if(nombreCliente == ''){
             $('#error').text('Debe ingresar un cliente'); 
@@ -290,6 +291,7 @@
                                     <th scope="row">${element.ticket_id}</th>
                                     <td>${element.fecha}</td>
                                     <td>${element.nombre}</td>
+                                    <td>${element.descuento}</td>
                                     <td>${element.precio}</td>
                                 </tr>
                                 `); 
@@ -351,6 +353,7 @@ let obtenerTicketsCajero = function () {
                                     <th scope="row">${element.ticket_id}</th>
                                     <td>${element.fecha}</td>
                                     <td>${element.nombre}</td>
+                                    <td>${element.descuento}</td>
                                     <td>${element.precio}</td>
                                 </tr>
                                 `);
@@ -510,6 +513,7 @@ let obtenerTicketsCajero = function () {
                                     <td>${element.fecha}</td>
                                     <td>${element.user_name}</td>
                                     <td>${element.nombre}</td>
+                                    <td>${element.descuento}</td>
                                     <td>${element.precio}</td>
                                 </tr>
                                 `);

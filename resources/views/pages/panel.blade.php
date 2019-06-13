@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div id="panel" class="container">
-    <div class="row justify-content-center"> 
+<div id="panel" class="container-fluid">
+    <div class="row justify-content-center pr-5 pl-5"> 
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div class="col-12 row align-items-center justify-content-end">
             <div class="form-group col-12 col-md-5">
@@ -82,6 +82,7 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Usuario</th>
                         <th scope="col">Cliente</th>
+                        <th scope="col">Descuento</th>
                         <th scope="col">Total</th>
                     </tr>
                 </thead>

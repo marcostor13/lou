@@ -10674,6 +10674,10 @@ body {
   background-color: #8a1253;
 }
 
+body * {
+  color: white;
+}
+
 .pointer {
   cursor: pointer;
 }
@@ -10861,6 +10865,18 @@ button.close {
 button:hover {
   background-color: #fda403 !important;
   transition: all 0.5s;
+}
+
+.agregar {
+  font-size: 40px;
+}
+
+input:disabled {
+  border: 0 !important;
+}
+
+select option {
+  color: #8a1253 !important;
 }
 
 #panel .card:nth-child(2n) {

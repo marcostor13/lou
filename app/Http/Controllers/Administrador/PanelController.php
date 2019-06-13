@@ -176,15 +176,15 @@ class PanelController extends Controller
 
         }
 
-        $gananciaNeta = $gananciaNeta/2; 
+        $gananciaAdmin = $gananciaNeta/2; 
         $gananciaUsuario = $gananciaNeta/2; 
 
         $datos = array(
             "cantTickets" => $cantTickets,
-            "totalFacturado" => $totalFacturado,
-            "gananciaNeta" => $gananciaNeta,
-            "gananciaUsuario" => $gananciaUsuario,
-            "totalDescuentos" => $totalDescuentos,
+            "totalFacturado" => round($totalFacturado,2),
+            "gananciaNeta" => round($gananciaAdmin,2),
+            "gananciaUsuario" => round($gananciaUsuario,2),
+            "totalDescuentos" => round($totalDescuentos,2),
             "servCantidad" => $servCantidad,
             "usuarioTicket" => $usuarioTicket,
         );
@@ -239,6 +239,101 @@ class PanelController extends Controller
     public function eliminarCliente(Request $request){                      
         DB::table('clientes')->where('id', '=', $request->id)->delete();
         return 1;
+    }
+
+
+    //CUPONES 
+
+    public function obtenerCupones(Request $request){
+
+
+        $users = DB::table('cupones')
+            ->join('users', 'users.id', '=', 'cupones.user_id')            
+            ->select('cupones.*', 'users.name as usuario')
+            ->get();     
+
+        return json_encode($users);
+    }
+
+    public function obtenerUsuariosSelect(Request $request){
+
+        $users = DB::table('users')
+        ->join('role_user', 'users.id', '=', 'role_user.user_id')     
+        ->where('role_user.role_id', '=', '2')
+        ->get();      
+        return json_encode($users);
+    }
+
+    public function crearCupon(Request $request){
+        
+        DB::table('cupones')->insert(
+            ['user_id' => $request->usuario, 'descripcion' => $request->descripcion, 'valor' => $request->valor]
+        );          
+
+        return 1;
+    }
+
+    public function obtenerPagos(Request $request){
+
+               
+        $idusuario = $request->usuario;           
+        $fechaInicio = $request->fechaInicio;           
+        $fechaFin = $request->fechaFin;     
+        
+        $fechaFin = date("Y-m-d",strtotime($fechaFin."+ 1 days"));
+            
+
+        if($idusuario == -1){
+            $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', users.name FROM tickets INNER JOIN users ON users.id = tickets.user_id WHERE  tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }else{
+            $results = DB::select("SELECT tickets.id, tickets.user_id, tickets.cliente_id, tickets.item_id, tickets.created_at as 'fecha', users.name FROM tickets INNER JOIN users ON users.id = tickets.user_id WHERE tickets.user_id = '$idusuario' AND tickets.created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }
+
+        
+        if(count($results)<1){
+            return json_encode(array(
+                'estado' => '100',
+                'datos' =>  'No hay resultados'
+            ));
+        }
+
+        $subTotal = 0;
+        
+        
+        foreach ($results as $ticket) {
+            
+            $items = implode(',', json_decode($ticket->item_id));      
+
+            $precio = DB::select("SELECT SUM(precio-descuento) as precio,  SUM(descuento) as descuento FROM items WHERE id IN ($items)"); 
+
+            $precio = json_decode(json_encode($precio), true);
+
+            $subTotal = $subTotal + $precio[0]['precio'];
+        }
+
+        if($idusuario == -1){
+             $cupones = DB::select("SELECT SUM(valor) as monto FROM cupones WHERE created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }else{
+             $cupones = DB::select("SELECT SUM(valor) as monto FROM cupones WHERE user_id = '$idusuario' AND created_at BETWEEN '$fechaInicio' AND '$fechaFin'");
+        }
+
+       $cupones = json_decode(json_encode($cupones), true);
+
+        $pagos = array(
+            'usuario' => $ticket->name,
+            'subTotal' => $subTotal,
+            'cupones' => $cupones[0]['monto'],
+            'total' => $subTotal - $cupones[0]['monto'],
+        ); 
+
+
+        $res = array(
+            'estado' => '200',
+            'datos' =>  $pagos
+        );
+
+        return json_encode($res); 
+
     }
 
 }

@@ -49857,7 +49857,7 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
 if (window.location.pathname.indexOf('agregar-usuario') > -1) {
   $(function () {
     $('#formCrearUsuario').submit(function () {
-      crearUsuario();
+      crearCupon();
       return false;
     });
   });
@@ -49881,6 +49881,154 @@ if (window.location.pathname.indexOf('agregar-usuario') > -1) {
       }
 
       $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+if (window.location.pathname.indexOf('cupon') > -1) {
+  $(function () {
+    obtenerCupones();
+    obtenerUsuariosSelect();
+    $('#formCrearCupon').submit(function () {
+      _crearCupon();
+
+      return false;
+    });
+  });
+
+  var obtenerCupones = function obtenerCupones() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#tablaCupones';
+    $.post("/obtenerCupones", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<tr data-id=\"".concat(element.id, "\"}\">\n                                    <th scope=\"row\"><input id='id' class='form-control' type='text' value='").concat(element.id, "' disabled></th>\n                                    <td><input id='fecha' class='form-control' type='text' value='").concat(element.created_at, "' disabled></td>\n                                    <td><input id='usuario' class='form-control' type='text' value='").concat(element.usuario, "' disabled></td>\n                                    <td><input id='descripcion' class='form-control' type='text' value='").concat(element.descripcion, "' disabled></td>\n                                    <td><input id='valor' class='form-control' type='text' value='").concat(element.valor, "' disabled></td>\n                                    \n                                </tr>\n                                "));
+      });
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var obtenerUsuariosSelect = function obtenerUsuariosSelect() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#selectUsuarios';
+    $.post("/obtenerUsuariosSelect", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<option value=\"".concat(element.id, "\">").concat(element.name, "</option>"));
+      });
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var _crearCupon = function _crearCupon() {
+    var form = $('#formCrearCupon');
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#respuestaCrearCupon';
+    $.post("/crearCupon", form.serialize(), function () {}).done(function (e) {
+      $('#tituloModal').text('Información de Cupon');
+      $('#btnModal2').hide();
+
+      if (e == 1) {
+        $('#contenidoModal').html('Cupon Creado');
+        $('#formCrearCupon input').val('');
+      } else {
+        $('#contenidoModal').html(e);
+      }
+
+      $('#myModal').modal('show');
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+}
+
+if (window.location.pathname.indexOf('pagos') > -1) {
+  $(function () {
+    _obtenerUsuariosSelect();
+
+    $('#selectUsuarios').change(function () {
+      obtenerPagos();
+      return false;
+    });
+    $('#fechaInicio').change(function () {
+      obtenerPagos();
+      return false;
+    });
+    $('#fechaFin').change(function () {
+      obtenerPagos();
+      return false;
+    });
+  });
+
+  var _obtenerUsuariosSelect = function _obtenerUsuariosSelect() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var tagResult = '#selectUsuarios';
+    $.post("/obtenerUsuariosSelect", function () {}).done(function (e) {
+      e = JSON.parse(e);
+      e.forEach(function (element) {
+        $(tagResult).append("<option value=\"".concat(element.id, "\">").concat(element.name, "</option>"));
+      });
+      obtenerPagos();
+    }).fail(function (e) {
+      $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
+    }).always(function () {// $(tagResult).html(''); 
+    });
+  };
+
+  var obtenerPagos = function obtenerPagos() {
+    $.ajaxSetup({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+    var datos = {
+      'usuario': $('#selectUsuarios').val(),
+      'fechaInicio': $('#fechaInicio').val(),
+      'fechaFin': $('#fechaFin').val()
+    };
+    var tagResult = '#tablaPagos';
+    $(tagResult).text('...Procesando');
+    $.post("/obtenerPagos", datos, function () {}).done(function (e) {
+      e = JSON.parse(e);
+
+      if (e.estado != 200) {
+        $(tagResult).text(e.datos);
+      } else {
+        $(tagResult).html('');
+        var cont = 1;
+        var element = e.datos;
+
+        if (element.cupones == null) {
+          element.cupones = 0;
+        }
+
+        $(tagResult).append("<tr>                                    \n                                    <td>".concat(cont, "</td>\n                                    <td>").concat(element.usuario, "</td>\n                                    <td>").concat(element.subTotal, "</td>\n                                    <td>").concat(element.cupones, "</td>\n                                    <td>").concat(element.total, "</td>\n                                </tr>\n                                "));
+        cont++;
+      }
     }).fail(function (e) {
       $(tagResult).append("<span class=\"text-danger\">Error: ".concat(e.responseText, "</span>"));
     }).always(function () {// $(tagResult).html(''); 
@@ -50027,7 +50175,7 @@ var agregarServicioProducto = function agregarServicioProducto(tipo) {
   var cantidad = $('#cantidad' + tipo).val();
   var descuento = $('#descuento' + tipo).val();
 
-  if (descuento.indexOf('%')) {
+  if (descuento.indexOf('%') > -1) {
     descuento = descuento.replace('%', '').trim();
     descuento = parseInt(precio) * parseInt(descuento) / 100;
   }
@@ -50120,7 +50268,7 @@ var obtenerTickets = function obtenerTickets() {
       // let a = 1; 
       $(tagResult).html('');
       e.datos.forEach(function (element) {
-        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
+        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.descuento, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
       });
       $('#tablaTickets tr').click(function () {
         var items = $(this).attr('data-items');
@@ -50156,7 +50304,7 @@ var obtenerTicketsCajero = function obtenerTicketsCajero() {
       // let a = 1; 
       $(tagResult).html('');
       e.datos.forEach(function (element) {
-        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
+        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(element.ticket_id, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.descuento, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                ")); // a = a+1;
       });
       $('#tablaTickets tr').click(function () {
         var items = $(this).attr('data-items');
@@ -50237,7 +50385,7 @@ var obtenerTicketsAdmin = function obtenerTicketsAdmin() {
       var _a = 1;
       $(tagResult).html('');
       e.datos.forEach(function (element) {
-        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(_a, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.user_name, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
+        $(tagResult).append("<tr class=\"pointer\" data-items=\"".concat(element.item_id, "\" data-ticket_id =\"").concat(element.ticket_id, "\">\n                                    <th scope=\"row\">").concat(_a, "</th>\n                                    <td>").concat(element.fecha, "</td>\n                                    <td>").concat(element.user_name, "</td>\n                                    <td>").concat(element.nombre, "</td>\n                                    <td>").concat(element.descuento, "</td>\n                                    <td>").concat(element.precio, "</td>\n                                </tr>\n                                "));
         _a = _a + 1;
       });
       $('#tablaTickets tr').click(function () {

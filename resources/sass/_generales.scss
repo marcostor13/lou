@@ -1,6 +1,9 @@
 //GENERALES
 body{
     background-color: $color4;
+    *{
+        color: white;
+    }
 }
 .pointer{
     cursor: pointer;
@@ -169,3 +172,16 @@ button:hover{
     transition: all .5s;
 }
 
+.agregar{
+    font-size: 40px;
+}
+
+input:disabled{
+    border: 0 !important;
+}
+
+select{
+    option{
+        color: $color4 !important;
+    }
+}

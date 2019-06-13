@@ -65,6 +65,19 @@ Route::get('/tickets-cajero', function () {
     return view('pages/tickets-cajero');
 })->middleware('auth', 'role:caja');
 
+Route::get('/cupones', function () {
+    return view('pages/cupones');
+})->middleware('auth', 'role:admin;caja');
+
+Route::get('/agregar-cupon', function () {
+    return view('pages/agregar-cupon');
+})->middleware('auth', 'role:admin;caja');
+
+Route::get('/pagos', function () {
+    return view('pages/pagos');
+})->middleware('auth', 'role:admin;caja');
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -76,12 +89,15 @@ Route::post('obtenerDatosTabla', 'GeneralController@obtenerDatosTabla');
 Route::post('obtenerClientes', 'Usuario\TicketsController@obtenerClientes');
 Route::post('crearTicket', 'Usuario\TicketsController@crearTicket');
 Route::post('obtenerTickets', 'Usuario\TicketsController@obtenerTickets');
+Route::post('obtenerPagos', 'Administrador\PanelController@obtenerPagos');
 Route::post('guardarTickets', 'Usuario\TicketsController@guardarTickets');
 Route::post('obtenerTicketsAdmin', 'Usuario\TicketsController@obtenerTicketsAdmin');
 Route::post('obtenerDetalleTicket', 'Usuario\TicketsController@obtenerDetalleTicket');
 Route::post('obtenerUsuarios', 'Administrador\PanelController@obtenerUsuarios');
+Route::post('obtenerUsuariosSelect', 'Administrador\PanelController@obtenerUsuariosSelect');
 Route::post('guardarUsuario', 'Administrador\PanelController@guardarUsuario');
 Route::post('crearUsuario', 'Administrador\PanelController@crearUsuario');
+Route::post('crearCupon', 'Administrador\PanelController@crearCupon');
 Route::post('eliminarUsuario', 'Administrador\PanelController@eliminarUsuario');
 Route::post('obtenerDatosPanel', 'Administrador\PanelController@obtenerDatosPanel');
 Route::post('agregarCliente', 'Administrador\PanelController@agregarCliente');
@@ -92,6 +108,7 @@ Route::post('guardarServicio', 'Administrador\PanelController@guardarServicio');
 Route::post('guardarCliente', 'Administrador\PanelController@guardarCliente');
 Route::post('eliminarServicio', 'Administrador\PanelController@eliminarServicio');
 Route::post('eliminarCliente', 'Administrador\PanelController@eliminarCliente');
+Route::post('obtenerCupones', 'Administrador\PanelController@obtenerCupones');
 
 
 
