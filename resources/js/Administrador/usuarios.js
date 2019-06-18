@@ -185,7 +185,7 @@ if (window.location.pathname.indexOf('agregar-usuario') > -1) {
     $(function () {
 
         $('#formCrearUsuario').submit(function () {
-            crearCupon();
+            crearUsuario();
             return false;
         });
 

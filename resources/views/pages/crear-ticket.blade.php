@@ -25,16 +25,16 @@
                         <option value="0">Servicio</option>                            
                     </select>
                     <div class="d-flex justify-content-between mt-2">
-                        <div >
-                            <label class="text-white ml-3" for="cantidadservicios">Cantidad</label>
+                        <div class="col-md-4 col-3 p-0">
+                            <label class="text-white " for="cantidadservicios">Cantidad</label>
                             <input type="number" class="form-control" id="cantidadservicios" value="1">  
                         </div>
-                        <div >
-                            <label class="text-white ml-3" for="precioservicios">Precio</label>
-                            <input type="text" class="form-control ml-2" id="precioservicios" >
+                        <div class="col-md-4 ml-md-2 col-3 p-0">
+                            <label class="text-white " for="precioservicios">Precio</label>
+                            <input type="text" class="form-control" id="precioservicios" >
                         </div>
-                        <div>
-                            <label class="text-white ml-3" for="descuentoservicios">Descuento</label>
+                        <div class="col-md-4 ml-md-2 col-3 p-0">
+                            <label class="text-white " for="descuentoservicios">Descuento</label>
                             <input type="text" class="form-control" id="descuentoservicios" >
                         </div>
                     </div>

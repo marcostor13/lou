@@ -49857,7 +49857,7 @@ if (window.location.pathname.indexOf('administrar-usuarios') > -1) {
 if (window.location.pathname.indexOf('agregar-usuario') > -1) {
   $(function () {
     $('#formCrearUsuario').submit(function () {
-      crearCupon();
+      crearUsuario();
       return false;
     });
   });
@@ -49893,8 +49893,7 @@ if (window.location.pathname.indexOf('cupon') > -1) {
     obtenerCupones();
     obtenerUsuariosSelect();
     $('#formCrearCupon').submit(function () {
-      _crearCupon();
-
+      crearCupon();
       return false;
     });
   });
@@ -49935,7 +49934,7 @@ if (window.location.pathname.indexOf('cupon') > -1) {
     });
   };
 
-  var _crearCupon = function _crearCupon() {
+  var crearCupon = function crearCupon() {
     var form = $('#formCrearCupon');
     $.ajaxSetup({
       headers: {
